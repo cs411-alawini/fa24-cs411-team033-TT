@@ -19,10 +19,10 @@
 
 |   Info      |        Description     |
 | ----------- | ---------------------- |
-|  Title      |       ProjectTitle     |
+|  Title      |       Outfit Calendar     |
 | System URL  |      link_to_system    |
 | Video Link  |      link_to_video     |
 
 ## Project Summary
 
-This is a summary of the project!
+A calendar recording users’ everyday outfits and recommending styling, helping people save time from deciding what to wear.
