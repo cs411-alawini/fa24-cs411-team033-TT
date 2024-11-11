@@ -5,7 +5,14 @@ import pymysql
 # import collections
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"/*": {"origins": "*", "supports_credentials": True}})
+cors = CORS(app, resources={
+    r"/api/*": {  # Apply CORS to specific routes (e.g., any route starting with /api/)
+        "origins": ["http://localhost:3000", "*"],  # Replace with your frontend origin
+        "methods": ["GET", "POST", "PUT", "DELETE"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True
+    }
+})
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 app.config['JSON_AS_ASCII'] = False
@@ -18,6 +25,7 @@ db = pymysql.connect(host='34.132.215.116',
                      user='root',
                      passwd='cC12345',
                      db='TT', charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
+
 
 @app.route('/api/clothes', methods=['POST'])
 @cross_origin()
