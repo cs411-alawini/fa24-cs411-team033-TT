@@ -63,7 +63,7 @@ const Closet = () => {
   useEffect(() => {
     const fetchClothes = async () => {
       try {
-        const response = await axios.get('http://localhost:5050/api/clothes?UserId=0');
+        const response = await axios.get('http://localhost:5050/api/clothes?UserId=1');
         console.log(response.data);
         setClothes(response.data); // Assuming response.data contains the array of clothes
       } catch (error) {

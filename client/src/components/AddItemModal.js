@@ -19,13 +19,14 @@ const AddItemModal = ({ isOpen, closeModal, onSave }) => {
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     setImageFile(file);
+    console.log("Selected file:", file);
   };
 
   
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     // Create a FormData object to send text fields and the image file
     const formData = new FormData();
     formData.append("ClothName", event.target.ClothName.value);
@@ -34,26 +35,27 @@ const AddItemModal = ({ isOpen, closeModal, onSave }) => {
     formData.append("Color", event.target.Color.value);
     formData.append("Usages", event.target.Usages.value);
     formData.append("TemperatureLevel", event.target.TemperatureLevel.value);
-    formData.append("image", imageFile);
+    formData.append("Image", imageFile);
 
-  
+    console.log('FormData contents:');
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+
     try {
       // Make a POST request to your backend API endpoint
-      const response = await axios.post('http://localhost:5050/api/clothes', {
-        method: "POST",
-        body: formData, // Pass the FormData directly
+      const response = await axios.post('http://localhost:5050/api/clothes', formData, {
+        // headers: {
+        //   'Content-Type': 'multipart/form-data'
+        // }
       });
-  
-      // Check if the response is successful
-      if (response.ok) {
-        const result = await response.json();
-        console.log("Upload successful:", result);
-        onSave(result); // Pass the result (e.g., the uploaded item data) back to the parent component
-        closeModal();
-      } else {
-        console.error("Upload failed:", response.statusText);
-        alert("Failed to upload image. Please try again.");
-      }
+
+      console.log("Upload successful:", response.data);
+
+      // Pass the result (e.g., the uploaded item data) back to the parent component
+      // onSave(response.data);
+      window.location.reload();
+      closeModal();
     } catch (error) {
       console.error("Error uploading image:", error);
       alert("An error occurred during the upload.");
