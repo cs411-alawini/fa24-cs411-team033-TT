@@ -11,7 +11,8 @@ GCS_BUCKET_NAME = 'example_411'  # Replace with your actual GCS bucket name
 
 def upload_to_gcs(file, filename):
     """Uploads a file to Google Cloud Storage and returns the public URL."""
-    client = storage.Client()
+    credential_file = 'cs411-438601-0532c77fe63b.json'
+    client = storage.Client.from_service_account_json(credential_file)
     bucket = client.bucket(GCS_BUCKET_NAME)
     blob = bucket.blob(filename)
 
@@ -45,7 +46,7 @@ app.config['JSONIFY_MIMETYPE'] = 'application/json;charset=utf-8'
 db = pymysql.connect(host='34.132.215.116',
                      user='root',
                      passwd='cC12345',
-                     db='TT3', charset='utf8mb4',cursorclass=pymysql.cursors.DictCursor)
+                     db='TT', charset='utf8mb4',cursorclass=pymysql.cursors.DictCursor)
 
 
 @app.route('/api/clothes', methods=['POST'])
@@ -54,29 +55,31 @@ def add_clothes():
     try:
         print(request)
         ClothId = 0
-        UserId = 0
+        UserId = 1
         # UserId = request.args.get('UserId', None)
         ClothName = request.form.get('ClothName', None)
         Category = request.form.get('Category', None)
-        Subcategory = request.form.get('Subcategory', None)
+        SubCategory = request.form.get('SubCategory', None)
         Color = request.form.get('Color', None)
-        Usages = request.args.get('Usages', None)
+        Usages = request.form.get('Usages', None)
         # Image = request.form.get('Image', None)
-        TemperatureLevel = request.args.get('TemperatureLevel', None)
+        TemperatureLevel = request.form.get('TemperatureLevel', None)
 
         image_file = request.files.get('Image')
-        print(f"POST /api/clothes: value({ClothId}, {UserId}, {ClothName}, {Category}, {Subcategory}, {Color}, {Usages}, {image_file}, {TemperatureLevel})")
+        print(image_file)
+        print(f"POST /api/clothes: value({ClothId}, {UserId}, {ClothName}, {Category}, {SubCategory}, {Color}, {Usages}, {image_file}, {TemperatureLevel})")
         if image_file:
             filename = secure_filename(image_file.filename)
             image_url = upload_to_gcs(image_file, filename)  # Upload and get the public URL
         else:
             image_url = None
+        print(image_url)
         
         with db.cursor() as cursor:
             # Execute SQL query
             sql = """INSERT INTO Clothes 
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-            cursor.execute(sql, (ClothId, UserId, ClothName, Category, Subcategory, Color, Usages, image_url, TemperatureLevel))
+            cursor.execute(sql, (ClothId, UserId, ClothName, Category, SubCategory, Color, Usages, image_url, TemperatureLevel))
             db.commit()
             
             return jsonify({'message': 'Clothes added'})
