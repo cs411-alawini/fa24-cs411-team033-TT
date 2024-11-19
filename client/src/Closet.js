@@ -5,6 +5,7 @@ import './styles/Closet.css';
 import ItemModal from './components/ItemModal';
 import AddItemModal from './components/AddItemModal';
 import api from './api'
+import logo from "./logo.png";
 
 const Closet = () => {
   const [isAddModalOpen, setAddModalOpen] = useState(false);
@@ -139,7 +140,7 @@ const Closet = () => {
     <div className="closet-container">
       {/* Header Section */}
       <header className="closet-header">
-        <div className="logo">Logo</div>
+        <img className="logo" src={logo} alt="logo" />
         <nav className="navigation">
           <span className="nav-item active">closet</span>
           <span className="nav-item">calendar</span>
