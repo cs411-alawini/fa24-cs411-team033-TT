@@ -55,19 +55,18 @@ def add_clothes():
     try:
         print(request)
         ClothId = 0
-        UserId = 1
+        UserId = 0
         # UserId = request.args.get('UserId', None)
         ClothName = request.form.get('ClothName', None)
         Category = request.form.get('Category', None)
-        SubCategory = request.form.get('SubCategory', None)
+        Subcategory = request.form.get('Subcategory', None)
         Color = request.form.get('Color', None)
-        Usages = request.form.get('Usages', None)
+        Usages = request.args.get('Usages', None)
         # Image = request.form.get('Image', None)
-        TemperatureLevel = request.form.get('TemperatureLevel', None)
+        TemperatureLevel = request.args.get('TemperatureLevel', None)
 
         image_file = request.files.get('Image')
-        print(image_file)
-        print(f"POST /api/clothes: value({ClothId}, {UserId}, {ClothName}, {Category}, {SubCategory}, {Color}, {Usages}, {image_file}, {TemperatureLevel})")
+        print(f"POST /api/clothes: value({ClothId}, {UserId}, {ClothName}, {Category}, {Subcategory}, {Color}, {Usages}, {image_file}, {TemperatureLevel})")
         if image_file:
             filename = secure_filename(image_file.filename)
             image_url = upload_to_gcs(image_file, filename)  # Upload and get the public URL
@@ -79,7 +78,7 @@ def add_clothes():
             # Execute SQL query
             sql = """INSERT INTO Clothes 
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-            cursor.execute(sql, (ClothId, UserId, ClothName, Category, SubCategory, Color, Usages, image_url, TemperatureLevel))
+            cursor.execute(sql, (ClothId, UserId, ClothName, Category, Subcategory, Color, Usages, image_url, TemperatureLevel))
             db.commit()
             
             return jsonify({'message': 'Clothes added'})

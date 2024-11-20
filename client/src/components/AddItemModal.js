@@ -19,14 +19,12 @@ const AddItemModal = ({ isOpen, closeModal, onSave }) => {
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     setImageFile(file);
-    console.log("Selected file:", file);
   };
 
   
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     // Create a FormData object to send text fields and the image file
     const formData = new FormData();
     formData.append("ClothName", event.target.ClothName.value);
