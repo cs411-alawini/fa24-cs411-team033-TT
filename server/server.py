@@ -242,9 +242,29 @@ def get_wearing_history():
             if UserId is not None:
                 # Execute SQL query
                 sql = """
-                    SELECT *
-                    FROM WearingHistory
-                    WHERE UserId = %s
+                    SELECT 
+                        WH.Date,
+                        C1.ClothName AS Cloth1Name, C1.Image AS Cloth1Image,
+                        C2.ClothName AS Cloth2Name, C2.Image AS Cloth2Image,
+                        C3.ClothName AS Cloth3Name, C3.Image AS Cloth3Image,
+                        C4.ClothName AS Cloth4Name, C4.Image AS Cloth4Image,
+                        C5.ClothName AS Cloth5Name, C5.Image AS Cloth5Image
+                    FROM 
+                        WearingHistory WH
+                    LEFT JOIN 
+                        Clothes C1 ON C1.ClothId = WH.Cloth1
+                    LEFT JOIN 
+                        Clothes C2 ON C2.ClothId = WH.Cloth2
+                    LEFT JOIN 
+                        Clothes C3 ON C3.ClothId = WH.Cloth3
+                    LEFT JOIN 
+                        Clothes C4 ON C4.ClothId = WH.Cloth4
+                    LEFT JOIN 
+                        Clothes C5 ON C5.ClothId = WH.Cloth5
+                    WHERE 
+                        WH.UserId = %s
+                    ORDER BY 
+                        WH.Date;
                     """
                 cursor.execute(sql, (UserId))
                 # Get query results
