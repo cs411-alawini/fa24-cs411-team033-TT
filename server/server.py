@@ -233,6 +233,102 @@ def signup():
 
     return jsonify({"message": "User registered successfully"}), 201
 
+@app.route('/api/wearingHistory', methods=['GET'])
+def get_wearing_history():
+    try:
+        with db.cursor() as cursor:
+            UserId = request.args.get('UserId', None)
+            print(f"GET /api/wearingHistory: UserId {UserId}")
+            if UserId is not None:
+                # Execute SQL query
+                sql = """
+                    SELECT *
+                    FROM WearingHistory
+                    WHERE UserId = %s
+                    """
+                cursor.execute(sql, (UserId))
+                # Get query results
+                results = cursor.fetchall()
+                # Convert results to JSON format string and encode with UTF-8
+                response_data = jsonify(results).get_data().decode('utf8')
+                # Create a new response object and pass the encoded string as data
+                response = make_response(response_data)
+                response.headers['Content-Type'] = 'application/json'
+                return response
+            else:
+                return jsonify({'error': 'Invalid data'})
+    except Exception as e:
+        print('Error:', e)
+        return jsonify({'error': str(e)})
+
+@app.route('/api/wearingHistory', methods=['POST', 'OPTIONS'])
+def post_wearing_history():
+    try:
+        WearingDate = request.form.get('Date', None)
+        UserId = request.form.get('UserId', None)
+        Cloth1 = request.form.get('Cloth1', None)
+        Cloth2 = request.form.get('Cloth2', None)
+        Cloth3 = request.form.get('Cloth3', None)
+        Cloth4 = request.form.get('Cloth4', None)
+        Cloth5 = request.form.get('Cloth5', None)
+
+        print(f"POST /api/clothes: value({WearingDate}, {UserId}, {Cloth1}, {Cloth2}, {Cloth3}, {Cloth4}, {Cloth5})")
+        
+        with db.cursor() as cursor:
+            # Execute SQL query
+            sql = """INSERT INTO WearingHistory
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+            cursor.execute(sql, (WearingDate, UserId, Cloth1, Cloth2, Cloth3, Cloth4, Cloth5))
+            db.commit()
+            
+            return jsonify({'message': 'WearingHistory added'})
+    except Exception as e:
+        db.rollback()
+        print('Error:', e)
+        return jsonify({'error': str(e)})
+
+@app.route('/api/wearingHistory', methods=['PUT'])
+def update_wearing_history():
+    try:
+        WearingDate = request.form.get('Date', None)
+        UserId = request.form.get('UserId', None)
+        Cloth1 = request.form.get('Cloth1', None)
+        Cloth2 = request.form.get('Cloth2', None)
+        Cloth3 = request.form.get('Cloth3', None)
+        Cloth4 = request.form.get('Cloth4', None)
+        Cloth5 = request.form.get('Cloth5', None)
+        print(f"PUT /api/wearingHistory: value({WearingDate}, {UserId}, {Cloth1}, {Cloth2}, {Cloth3}, {Cloth4}, {Cloth5})")
+        with db.cursor() as cursor:
+            # Execute SQL query
+            sql = """UPDATE WearingHistory 
+                    SET Cloth1=%s, Cloth2=%s, Cloth3=%s, Cloth4=%s, Cloth5=%s
+                    WHERE Date = %s AND UserId = %s"""
+            cursor.execute(sql, (Cloth1, Cloth2, Cloth3, Cloth4, Cloth5, WearingDate, UserId))
+            db.commit()
+            
+            return jsonify({'message': f'WearingHistory {UserId} on {WearingDate} update'})
+    except Exception as e:
+        db.rollback()
+        print('Error:', e)
+        return jsonify({'error': str(e)})
+
+@app.route('/api/wearingHistory', methods=['DELETE'])
+def delete_wearing_history():
+    try:
+        WearingDate = request.form.get('Date')
+        UserId = request.form.get('UserId')
+        print(f"DELETE /api/wearingHistory: UserId {UserId} on {WearingDate}")
+        with db.cursor() as cursor:
+            # Execute SQL query
+            sql = """DELETE FROM WearingHistory
+                    WHERE Date = %s AND UserId = %s"""
+            cursor.execute(sql, (WearingDate, UserId))
+            db.commit()
+            return jsonify({'message': f'WearingHistory {UserId} on {WearingDate} deleted'})
+    except Exception as e:
+        db.rollback()
+        print('Error:', e)
+        return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5050,debug=True)
