@@ -1,0 +1,207 @@
+/* src/Closet.css */
+
+.closet-container {
+    width: 100%;
+    border: 2px solid black;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  
+  .closet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .logo {
+    width: 100px;
+    height: 50px;
+    border: 1px solid gray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .navigation {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .nav-item {
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .nav-item.active {
+    text-decoration: underline;
+  }
+  
+  .search-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .search-bar input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .search-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2em;
+    margin-left: 5px;
+  }
+  
+  .closet-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* Fixed 7 columns */
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .closet-item {
+    width: 100%;
+    height: 100px; /* Adjust height as needed */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f0f0f0; /* Light gray background for placeholders */
+  }
+  
+  .placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #aaa;
+    font-size: 0.9em;
+  }
+
+  .item-image {
+    width: 80px; /* Adjust width as needed */
+    height: auto; /* Keeps the aspect ratio */
+    max-height: 100px; /* Set a max height to prevent it from growing too large */
+    object-fit: cover; /* Ensures the image fills the space without distorting */
+    border-radius: 5px; /* Optional: adds rounded corners */
+  }
+
+  .filter-buttons {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+  }
+  
+  .filter-button {
+    background-color: #e0e0e0
+  }
+
+  .calendar-header {
+    text-align: center;
+    margin: 20px 0;
+    font-weight: bold;
+    font-size: 24px;
+  }
+  
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 columns for the days of the week */
+    gap: 10px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .calendar-day-name {
+    font-weight: bold;
+    text-align: center;
+    padding: 10px 0;
+    background-color: #ececec;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .calendar-day {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 16px;
+  }
+  
+  .calendar-day.placeholder {
+    background-color: #f0f0f0;
+  }
+
+  .clothes-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    grid-template-rows: repeat(2, 1fr); /* 2 rows */
+    gap: 4px; /* Space between items */
+    justify-items: center; /* Center items horizontally */
+    align-items: center; /* Center items vertically */
+  }
+  
+  .clothing-item {
+    width: 40px; /* Adjust width */
+    height: 40px; /* Adjust height */
+    object-fit: cover; /* Ensures images fit nicely */
+    border-radius: 4px; /* Optional: Rounded corners */
+  }
+
+  .popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  .popup-content h3 {
+    margin-top: 0;
+  }
+  
+  .popup-content ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .popup-content li {
+    margin: 5px 0;
+  }
+  
+  .close-popup {
+    margin-top: 15px;
+    padding: 5px 10px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .close-popup:hover {
+    background-color: #d32f2f;
+  }
