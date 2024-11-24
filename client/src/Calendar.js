@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './styles/Calendar.css';
-import logo from "./logo.png";
 import axios from 'axios';
 
 const Calendar = () => {
@@ -85,7 +84,7 @@ const Calendar = () => {
 
   return (
     <div className="closet-container">
-      
+
       <div className="calendar-header">
         <button className="nav-button" onClick={handlePrevMonth}>◀</button>
         <h2>{currentMonthName} {currentYear}</h2>

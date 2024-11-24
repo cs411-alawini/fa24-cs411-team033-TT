@@ -22,5 +22,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# 
+# secret
 server/cs411-438601-0532c77fe63b.json
+
+# cache 
+client/node_modules/.cache/
