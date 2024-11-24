@@ -138,15 +138,6 @@ const Closet = () => {
 
   return (
     <div className="closet-container">
-      {/* Header Section */}
-      <header className="closet-header">
-        <img className="logo" src={logo} alt="logo" />
-        <nav className="navigation">
-          <span className="nav-item active">closet</span>
-          <span className="nav-item">calendar</span>
-          <span className="nav-item">today outfit</span>
-        </nav>
-      </header>
 
       {/* Search Section */}
       <div className="search-bar">

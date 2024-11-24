@@ -85,15 +85,7 @@ const Calendar = () => {
 
   return (
     <div className="closet-container">
-      <header className="closet-header">
-        <img className="logo" src={logo} alt="logo" />
-        <nav className="navigation">
-          <span className="nav-item">closet</span>
-          <span className="nav-item">calendar</span>
-          <span className="nav-item">today outfit</span>
-        </nav>
-      </header>
-
+      
       <div className="calendar-header">
         <button className="nav-button" onClick={handlePrevMonth}>◀</button>
         <h2>{currentMonthName} {currentYear}</h2>

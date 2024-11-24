@@ -23,20 +23,6 @@
     align-items: center;
   }
   
-  .navigation {
-    display: flex;
-    gap: 20px;
-  }
-  
-  .nav-item {
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .nav-item.active {
-    text-decoration: underline;
-  }
-  
   .search-bar {
     display: flex;
     align-items: center;
