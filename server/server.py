@@ -350,5 +350,185 @@ def delete_wearing_history():
         print('Error:', e)
         return jsonify({'error': str(e)})
 
+@app.route('/api/favoriteGroups', methods=['GET'])
+def get_all_fav_groups():
+    try:
+        with db.cursor() as cursor:
+            UserId = request.args.get('UserId', None)
+            print(f"GET /api/favoriteGroups: UserId {UserId}")
+            if UserId is not None:
+                # Execute SQL query
+                sql = """
+                    SELECT *
+                    FROM FavoriteGroups
+                    WHERE UserId = %s
+                    """
+                cursor.execute(sql, (UserId))
+                # Get query results
+                results = cursor.fetchall()
+                # Convert results to JSON format string and encode with UTF-8
+                response_data = jsonify(results).get_data().decode('utf8')
+                # Create a new response object and pass the encoded string as data
+                response = make_response(response_data)
+                response.headers['Content-Type'] = 'application/json'
+                return response
+            else:
+                return jsonify({'error': 'Invalid data'})
+    except Exception as e:
+        print('Error:', e)
+        return jsonify({'error': str(e)})
+    
+@app.route('/api/favoriteGroups', methods=['POST'])
+@cross_origin()
+def add_fav_group():
+    try:
+        print(request)
+        FavId = 0
+        UserId = request.args.get('UserId', None)
+        GroupName = request.form.get('GroupName', None)
+
+        print(f"POST /api/favoriteGroups: value({FavId}, {UserId}, {GroupName})")
+        
+        with db.cursor() as cursor:
+            # Execute SQL query
+            sql = """INSERT INTO FavoriteGroups
+                    VALUES (%s, %s, %s)"""
+            cursor.execute(sql, (FavId, UserId, GroupName))
+            db.commit()
+            
+            return jsonify({'message': 'Favorite group added'})
+    except Exception as e:
+        db.rollback()
+        print('Error:', e)
+        return jsonify({'error': str(e)})
+
+@app.route('/api/favoriteGroups', methods=['PUT'])
+def update_fav_group():
+    try:
+        FavId = request.args.get('FavoriteId', None)
+        GroupName = request.args.get('GroupName', None)
+        print(f"PUT /api/clothes: value({FavId}, {GroupName})")
+        with db.cursor() as cursor:
+            # Execute SQL query
+            sql = """UPDATE FavoriteGroups 
+                    SET GroupName=%s
+                    WHERE FavoriteId=%s"""
+            cursor.execute(sql, (GroupName, FavId))
+            db.commit()
+            
+            return jsonify({'message': f'Favorite group {FavId} update'})
+    except Exception as e:
+        db.rollback()
+        print('Error:', e)
+        return jsonify({'error': str(e)})
+    
+@app.route('/api/favoriteGroups', methods=['DELETE'])
+def delete_fav_group():
+    try:
+        FavId = request.form.get('FavoriteId')
+
+        print(f"DELETE /api/favoriteGroups: FavoriteId {FavId}")
+        with db.cursor() as cursor:
+            # Execute SQL query
+            sql = """DELETE FROM FavoriteGroups
+                    WHERE Favoriteid=%s"""
+            cursor.execute(sql, (FavId))
+            db.commit()
+            return jsonify({'message': f'Favorite Group {FavId} deleted'})
+    except Exception as e:
+        db.rollback()
+        print('Error:', e)
+        return jsonify({'error': str(e)})
+
+@app.route('/api/include', methods=['GET'])
+def get_include():
+    try:
+        with db.cursor() as cursor:
+            FavId = request.args.get('FavoriteId', None)
+            print(f"GET /api/favoriteGroups: UserId {FavId}")
+            if FavId is not None:
+                # Execute SQL query
+                sql = """
+                    SELECT *
+                    FROM Include
+                    WHERE FavoriteId = %s
+                    """
+                cursor.execute(sql, (FavId))
+                # Get query results
+                results = cursor.fetchall()
+                # Convert results to JSON format string and encode with UTF-8
+                response_data = jsonify(results).get_data().decode('utf8')
+                # Create a new response object and pass the encoded string as data
+                response = make_response(response_data)
+                response.headers['Content-Type'] = 'application/json'
+                return response
+            else:
+                return jsonify({'error': 'Invalid data'})
+    except Exception as e:
+        print('Error:', e)
+        return jsonify({'error': str(e)})
+
+@app.route('/api/include', methods=['POST'])
+@cross_origin()
+def add_include():
+    try:
+        print(request)
+        FavId = request.form.get('FavoriteId', None)
+        ClothId = request.form.get('ClothId', None)
+
+        print(f"POST /api/favoriteGroups: value({FavId}, {ClothId})")
+        
+        with db.cursor() as cursor:
+            # Execute SQL query
+            sql = """INSERT INTO Include
+                    VALUES (%s, %s)"""
+            cursor.execute(sql, (FavId, ClothId))
+            db.commit()
+            
+            return jsonify({'message': 'Include relationship added'})
+    except Exception as e:
+        db.rollback()
+        print('Error:', e)
+        return jsonify({'error': str(e)})
+    
+@app.route('/api/include', methods=['PUT'])
+def update_include():
+    try:
+        FavId = request.args.get('FavoriteId', None)
+        ClothId = request.args.get('ClothId', None)
+        print(f"PUT /api/include: value({FavId}, {ClothId})")
+        with db.cursor() as cursor:
+            # Execute SQL query
+            sql = """UPDATE Include
+                    SET FavoriteId=%s
+                    WHERE FavoriteId=%s AND ClothId=%s"""
+            cursor.execute(sql, (FavId, FavId, ClothId))
+            db.commit()
+            
+            return jsonify({'message': f'Include relationship FavoriteId {FavId} with ClothId {ClothId} update'})
+    except Exception as e:
+        db.rollback()
+        print('Error:', e)
+        return jsonify({'error': str(e)})
+
+@app.route('/api/include', methods=['DELETE'])
+def delete_include():
+    try:
+        FavId = request.form.get('FavoriteId')
+        ClothId = request.form.get('ClothId')
+
+        print(f"DELETE /api/include: FavoriteId {FavId} and ClothId {ClothId}")
+        with db.cursor() as cursor:
+            # Execute SQL query
+            sql = """DELETE FROM Include
+                    WHERE Favoriteid=%s AND ClothId=%s"""
+            cursor.execute(sql, (FavId, ClothId))
+            db.commit()
+            return jsonify({'message': f'Include relationship FavoriteId {FavId} with ClothId {ClothId} deleted'})
+    except Exception as e:
+        db.rollback()
+        print('Error:', e)
+        return jsonify({'error': str(e)})
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5050,debug=True)
