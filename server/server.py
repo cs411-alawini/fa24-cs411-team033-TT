@@ -142,7 +142,7 @@ def get_all_clothes():
                 # Execute SQL query
                 sql = """
                     SELECT *
-                    FROM Clothes
+                    FROM Clothes NATURAL JOIN Temperature
                     WHERE UserId = %s
                     """
                 cursor.execute(sql, (UserId))
