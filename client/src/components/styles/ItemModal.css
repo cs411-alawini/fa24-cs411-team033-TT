@@ -205,3 +205,9 @@
   .delete-button:hover {
     background-color: #d93b3b;
   }
+  .tag-button.in-group {
+    background-color: blue;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
