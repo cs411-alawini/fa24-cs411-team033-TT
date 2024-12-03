@@ -16,50 +16,6 @@ const Closet = () => {
 
   const userId = 0;
 
-  // const clothes = [
-  //   { ClothId: 1, ClothName: "T-Shirt", Category: "Topwear", Subcategory:"shirt", Color:"green", Usages:"sports",Image: "/mockup_img/shirt.jpg", TemperatureMin:"20", TemperatureMax:"30"},
-  //   { ClothId: 2, ClothName: "Sport Pants", Category: "Bottom", Subcategory:"pants", Color:"gray", Usages:"sports",Image: "/mockup_img/pants.jpg", TemperatureMin:"10", TemperatureMax:"20"},
-    // { id: 2, name: "Jeans", image: "/mockup_img/pants.jpg", tag: "Casual" },
-    // { id: 3, name: "Jacket", image: "/mockup_img/shirt.jpg", tag: "Winter" },
-    // { id: 4, name: "T-Shirt", image: "/mockup_img/shirt.jpg", tag: "Summer" },
-    // { id: 5, name: "Jeans", image: "/mockup_img/pants.jpg", tag: "Casual" },
-    // { id: 6, name: "Jacket", image: "/mockup_img/shirt.jpg", tag: "Winter" },
-    // { id: 7, name: "T-Shirt", image: "/mockup_img/shirt.jpg", tag: "Summer" },
-    // { id: 8, name: "Jeans", image: "/mockup_img/pants.jpg", tag: "Casual" },
-    // { id: 9, name: "Jacket", image: "/mockup_img/shirt.jpg", tag: "Winter" },
-    // { id: 10, name: "T-Shirt", image: "/mockup_img/shirt.jpg", tag: "Summer" },
-    // { id: 11, name: "Jeans", image: "/mockup_img/pants.jpg", tag: "Casual" },
-    // { id: 12, name: "Jacket", image: "/mockup_img/shirt.jpg", tag: "Winter" },
-    // { id: 13, name: "T-Shirt", image: "/mockup_img/shirt.jpg", tag: "Summer" },
-    // { id: 14, name: "Jeans", image: "/mockup_img/pants.jpg", tag: "Casual" },
-    // { id: 15, name: "Jacket", image: "/mockup_img/shirt.jpg", tag: "Winter" },
-    // { id: 16, name: "T-Shirt", image: "/mockup_img/shirt.jpg", tag: "Summer" },
-    // { id: 17, name: "Jeans", image: "/mockup_img/pants.jpg", tag: "Casual" },
-    // { id: 18, name: "Jacket", image: "/mockup_img/shirt.jpg", tag: "Winter" },
-    // { id: 19, name: "T-Shirt", image: "/mockup_img/shirt.jpg", tag: "Summer" },
-    // { id: 20, name: "Jeans", image: "/mockup_img/pants.jpg", tag: "Casual" },
-    // { id: 21, name: "Jacket", image: "/mockup_img/shirt.jpg", tag: "Winter" },
-    // { id: 22, name: "T-Shirt", image: "/mockup_img/shirt.jpg", tag: "Summer" },
-    // { id: 23, name: "Jeans", image: "/mockup_img/pants.jpg", tag: "Casual" },
-    // { id: 24, name: "Jacket", image: "/mockup_img/shirt.jpg", tag: "Winter" },
-    // { id: 25, name: "T-Shirt", image: "/mockup_img/shirt.jpg", tag: "Summer" },
-    // { id: 26, name: "Jeans", image: "/mockup_img/pants.jpg", tag: "Casual" },
-    // { id: 27, name: "Jacket", image: "/mockup_img/shirt.jpg", tag: "Winter" },
-    // { id: 28, name: "T-Shirt", image: "/mockup_img/shirt.jpg", tag: "Summer" },
-    // { id: 29, name: "Jeans", image: "/mockup_img/pants.jpg", tag: "Casual" },
-    // { id: 30, name: "Jacket", image: "/mockup_img/shirt.jpg", tag: "Winter" },
-    // { id: 31, name: "T-Shirt", image: "/mockup_img/shirt.jpg", tag: "Summer" },
-    // { id: 32, name: "Jeans", image: "/mockup_img/pants.jpg", tag: "Casual" },
-    // { id: 33, name: "Jacket", image: "/mockup_img/shirt.jpg", tag: "Winter" },
-    // { id: 34, name: "T-Shirt", image: "/mockup_img/shirt.jpg", tag: "Summer" },
-    // { id: 35, name: "Jeans", image: "/mockup_img/pants.jpg", tag: "Casual" },
-    // { id: 36, name: "Jacket", image: "/mockup_img/shirt.jpg", tag: "Winter" },
-    // { id: 37, name: "T-Shirt", image: "/mockup_img/shirt.jpg", tag: "Summer" },
-    // { id: 38, name: "Jeans", image: "/mockup_img/pants.jpg", tag: "Casual" },
-    // { id: 39, name: "Jacket", image: "/mockup_img/shirt.jpg", tag: "Winter" },
-    // { id: 40, name: "T-Shirt", image: "/mockup_img/shirt.jpg", tag: "Summer" },
-  // ];
-
   const [clothes, setClothes] = useState([]);
   useEffect(() => {
     const fetchClothes = async () => {
@@ -149,9 +105,11 @@ const Closet = () => {
       {/* Filter Buttons */}
       <div className="filter-buttons">
         <button className={`filter-button ${filter === 'All' ? 'active' : ''}`} onClick={() => handleFilterClick('All')}>All</button>
-        <button className={`filter-button ${filter === 'Topwear' ? 'active' : ''}`} onClick={() => handleFilterClick('Topwear')}>Topwear</button>
-        <button className={`filter-button ${filter === 'Bottom' ? 'active' : ''}`} onClick={() => handleFilterClick('Bottom')}>Bottom</button>
-        <button className={`filter-button ${filter === 'Accessory' ? 'active' : ''}`} onClick={() => handleFilterClick('Accessory')}>Accessory</button>
+        <button className={`filter-button ${filter === 'Topwear' ? 'active' : ''}`} onClick={() => handleFilterClick('Topwear')}>Top</button>
+        <button className={`filter-button ${filter === 'Bottomwear' ? 'active' : ''}`} onClick={() => handleFilterClick('Bottomwear')}>Bottom</button>
+        <button className={`filter-button ${filter === 'Shoes' ? 'active' : ''}`} onClick={() => handleFilterClick('Shoes')}>Shoes</button>
+
+        <button className={`filter-button ${filter === 'Headwear' ? 'active' : ''}`} onClick={() => handleFilterClick('Headwear')}>Hats</button>
       </div>
 
       {/* Closet Grid */}
