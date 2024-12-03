@@ -171,67 +171,74 @@ def login():
         return jsonify({"message": "Missing email parameter"}), 400
     if not password:
         return jsonify({"message": "Missing password parameter"}), 400
+
+    try:
+        db.ping(reconnect=True)
+    except pymysql.MySQLError as e:
+        return jsonify({"message": "Database connection error"}), 500
+
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM Users WHERE Email=%s", (email))
-    user = cursor.fetchone()
+    try:
+        cursor.execute("SELECT * FROM Users WHERE Email=%s", (email,))
+        user = cursor.fetchone()
+    except Exception as e:
+        return jsonify({"message": "Database query error", "error": str(e)}), 500
+
     if user is None:
         return jsonify({"message": "Invalid email or password"}), 401
-    stored_password = user[5].strip()
+    stored_password = user['Password'].strip()
     if password != stored_password:
         return jsonify({"message": "Invalid email or password"}), 401
+
     user_info = {
-        'id': user[0],
-        'firstName': user[1],
-        'lastName': user[2],
-        'phoneNumber': user[3],
-        'email': user[4]
+        'id': user['UserId'],
+        'firstName': user['FirstName'],
+        'lastName': user['LastName'],
+        'phoneNumber': user['PhoneNumber'],
+        'email': user['Email']
     }
     return jsonify(user_info), 200
 
-@app.route('/api/signup', methods=['POST', 'OPTIONS'])
+@app.route('/api/register', methods=['POST', 'OPTIONS'])
 @cross_origin()
-def signup():
+def register():
     if not request.is_json:
         return jsonify({"message": "Missing JSON in request"}), 400
 
-    # Extracting user information from the JSON request
-    userId = 0
+    first_name = request.json.get('FirstName', None)
+    last_name = request.json.get('LastName', None)
+    phone_number = request.json.get('PhoneNumber', None)
     email = request.json.get('Email', None)
     password = request.json.get('Password', None)
-    first_name = request.json.get('FirstName', '')
-    last_name = request.json.get('LastName', '')
-    phone_number = request.json.get('PhoneNumber', '')
 
-    # Checking if required fields are present
-    if not email:
-        return jsonify({"message": "Missing email parameter"}), 400
-    if not password:
-        return jsonify({"message": "Missing password parameter"}), 400
-    if not first_name:
-        return jsonify({"message": "Missing first name"}), 400
-    if not last_name:
-        return jsonify({"message": "Missing last name"}), 400
+    if not all([first_name, last_name, phone_number, email, password]):
+        return jsonify({"message": "Missing parameters"}), 400
+
+    try:
+        db.ping(reconnect=True)
+    except pymysql.MySQLError as e:
+        return jsonify({"message": "Database connection error"}), 500
 
     cursor = db.cursor()
-
-    # Check if the user already exists
-    cursor.execute("SELECT * FROM Users WHERE Email=%s", (email,))
-    user = cursor.fetchone()
-    if user:
-        return jsonify({"message": "Email already registered"}), 409
-
-    # Insert the new user into the database
     try:
-        cursor.execute("""
-            INSERT INTO Users (UserId, FirstName, LastName, PhoneNumber, Email, Password)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """, (userId, first_name, last_name, phone_number, email, password))
+        cursor.execute("SELECT * FROM Users WHERE Email=%s", (email,))
+        existing_user = cursor.fetchone()
+        if existing_user:
+            return jsonify({"message": "Email already exists"}), 409
+
+        cursor.execute(
+            """
+            INSERT INTO Users (FirstName, LastName, PhoneNumber, Email, Password)
+            VALUES (%s, %s, %s, %s, %s)
+            """,
+            (first_name, last_name, phone_number, email, password)
+        )
         db.commit()
     except Exception as e:
-        db.rollback()
-        return jsonify({"message": "Error saving user"}), 500
+        return jsonify({"message": "Database query error", "error": str(e)}), 500
 
-    return jsonify({"message": "User registered successfully"}), 201
+    return jsonify({"message": "Registration successful"}), 201
+
 
 @app.route('/api/wearingHistory', methods=['GET'])
 def get_wearing_history():
@@ -445,7 +452,7 @@ def get_include():
     try:
         with db.cursor() as cursor:
             FavId = request.args.get('FavoriteId', None)
-            print(f"GET /api/favoriteGroups: UserId {FavId}")
+            print(f"GET /api/include: FavoriteId {FavId}")
             if FavId is not None:
                 # Execute SQL query
                 sql = """
