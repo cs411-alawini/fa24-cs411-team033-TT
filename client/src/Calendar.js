@@ -8,6 +8,7 @@ const Calendar = () => {
   const [wearingHistory, setWearingHistory] = useState([]);
   const [popupData, setPopupData] = useState(null); // State for popup data
   const [isPopupOpen, setIsPopupOpen] = useState(false); // State for popup visibility
+  const [isAddPopupOpen, setIsAddPopupOpen] = useState(false); // State for add form visibility
 
   useEffect(() => {
     const fetchWearingHistory = async () => {
@@ -82,6 +83,43 @@ const Calendar = () => {
     setPopupData(null);
   };
 
+  // Open add popup
+  const openAddPopup = () => {
+    setIsAddPopupOpen(true);
+  };
+
+  // Close add popup
+  const closeAddPopup = () => {
+    setIsAddPopupOpen(false);
+  };
+
+  // Handle form submission for adding wearing history
+  const handleSubmitWearingHistory = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+
+    try {
+      const response = await axios.post('http://localhost:5050/api/wearingHistory', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      alert('Wearing history added successfully!');
+      setIsAddPopupOpen(false);
+      // Refresh wearing history
+      const updatedHistory = await axios.get('http://localhost:5050/api/wearingHistory', {
+        params: { UserId: 1 },
+      });
+      setWearingHistory(updatedHistory.data.map((item) => ({
+        ...item,
+        Date: new Date(item.Date),
+      })));
+    } catch (error) {
+      console.error('Error adding wearing history:', error);
+      alert('Failed to add wearing history.');
+    }
+  };
+
   return (
     <div className="closet-container">
 
@@ -89,6 +127,7 @@ const Calendar = () => {
         <button className="nav-button" onClick={handlePrevMonth}>◀</button>
         <h2>{currentMonthName} {currentYear}</h2>
         <button className="nav-button" onClick={handleNextMonth}>▶</button>
+        <button className="add-button" onClick={openAddPopup}>Add History</button>
       </div>
 
       <div className="calendar-grid">
@@ -129,7 +168,27 @@ const Calendar = () => {
         ))}
       </div>
 
-      {/* Popup */}
+      {/* Add History Popup */}
+      {isAddPopupOpen && (
+        <div className="popup-overlay" onClick={closeAddPopup}>
+          <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Add Wearing History</h3>
+            <form onSubmit={handleSubmitWearingHistory}>
+              <input type="date" name="Date" required />
+              <input type="number" name="UserId" placeholder="User ID" required />
+              <input type="text" name="Cloth1" placeholder="Cloth1 ID" />
+              <input type="text" name="Cloth2" placeholder="Cloth2 ID" />
+              <input type="text" name="Cloth3" placeholder="Cloth3 ID" />
+              <input type="text" name="Cloth4" placeholder="Cloth4 ID" />
+              <input type="text" name="Cloth5" placeholder="Cloth5 ID" />
+              <button type="submit">Submit</button>
+            </form>
+            <button onClick={closeAddPopup} className="close-popup">Close</button>
+          </div>
+        </div>
+      )}
+
+      {/* View History Popup */}
       {isPopupOpen && (
         <div className="popup-overlay" onClick={closePopup}>
           <div className="popup-content" onClick={(e) => e.stopPropagation()}>
