@@ -3,6 +3,10 @@ import axios from 'axios';
 import './styles/ItemModal.css';
 
 const ItemModal = ({ item, closeModal }) => {
+  // Guard clause for invalid item
+  
+
+  // State management
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     ClothId: item.ClothId,
