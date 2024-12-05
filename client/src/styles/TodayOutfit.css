@@ -1,0 +1,43 @@
+.closet-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .dropdown {
+    margin: 20px 0;
+  }
+  
+  .dropdown-button {
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+  }
+  
+  .dropdown-menu {
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin-top: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  
+  .dropdown-item input {
+    margin-right: 8px;
+  }
+  
+  .logout-button {
+    padding: 10px 20px;
+    background-color: #8fb7fc;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  

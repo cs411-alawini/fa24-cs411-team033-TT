@@ -44,7 +44,10 @@ const Calendar = () => {
   const [popupData, setPopupData] = useState(null); // State for popup data
   const [isPopupOpen, setIsPopupOpen] = useState(false); // State for popup visibility
   const [isAddPopupOpen, setIsAddPopupOpen] = useState(false); // State for add form visibility
+  const [isEditing, setIsEditing] = useState(false); // State for edit mode
   const [clothesList, setClothesList] = useState([]); // State for clothes data
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false); // State for delete popup visibility
+  const [deleteDate, setDeleteDate] = useState(null); // Selected date for deletion
   const navigate = useNavigate();
 
   // useEffect(() => {
@@ -227,6 +230,7 @@ const Calendar = () => {
   const closePopup = () => {
     setIsPopupOpen(false);
     setPopupData(null);
+    setIsEditing(false);
   };
 
   // Open add popup
@@ -239,32 +243,10 @@ const Calendar = () => {
     setIsAddPopupOpen(false);
   };
 
-  // Handle form submission for adding wearing history
-  // const handleSubmitWearingHistory = async (event) => {
-  //   event.preventDefault();
-  //   const formData = new FormData(event.target);
+  const openEditPopup = () => {
+    setIsEditing(true);
+  };
 
-  //   try {
-  //     const response = await axios.post('http://localhost:5050/api/wearingHistory', formData, {
-  //       headers: {
-  //         'Content-Type': 'multipart/form-data',
-  //       },
-  //     });
-  //     alert('Wearing history added successfully!');
-  //     setIsAddPopupOpen(false);
-  //     // Refresh wearing history
-  //     const updatedHistory = await axios.get('http://localhost:5050/api/wearingHistory', {
-  //       params: { UserId: 1 },
-  //     });
-  //     setWearingHistory(updatedHistory.data.map((item) => ({
-  //       ...item,
-  //       Date: new Date(item.Date),
-  //     })));
-  //   } catch (error) {
-  //     console.error('Error adding wearing history:', error);
-  //     alert('Failed to add wearing history.');
-  //   }
-  // };
 
   const handleSubmitWearingHistory = async (event) => {
     event.preventDefault();
@@ -277,21 +259,46 @@ const Calendar = () => {
   
     const formData = new FormData(event.target);
     formData.append('UserId', userId); // Add UserId to the form data
+
+    const keysToRemove = [];
+    for (const [key, value] of formData.entries()) {
+      if (key.startsWith('Cloth') && (!value || value.trim() === '')) {
+        keysToRemove.push(key);
+      }
+    }
+
+    // Remove keys marked for removal
+    keysToRemove.forEach((key) => formData.delete(key));
   
     try {
-      await axios.post('http://localhost:5050/api/wearingHistory', formData, {
+      const response = await axios.post('http://localhost:5050/api/wearingHistory', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
   
+      // Check if response is OK
+      // console.log(response);
+      if (response.data && response.data.error) {
+        console.error('Error in response data:', response.data.error);
+        alert(`Failed to add wearing history: ${response.data.error}`);
+        return;
+      }
+  
       alert('Wearing history added successfully!');
       setIsAddPopupOpen(false);
   
       // Refresh wearing history
-      const updatedResponse = await axios.get(`http://localhost:5050/api/wearingHistory`, {
+      const updatedResponse = await axios.get('http://localhost:5050/api/wearingHistory', {
         params: { UserId: userId },
       });
+  
+      // Check if updatedResponse is OK
+      if (updatedResponse.status !== 200) {
+        console.error('Error: Failed to refresh wearing history', updatedResponse.status);
+        alert(`Failed to refresh wearing history. Server responded with status: ${updatedResponse.status}`);
+        return;
+      }
   
       setWearingHistory(
         updatedResponse.data.map((item) => ({
@@ -301,7 +308,68 @@ const Calendar = () => {
       );
     } catch (error) {
       console.error('Error adding wearing history:', error);
-      alert('Failed to add wearing history.');
+      alert('Failed to add wearing history. Please try again.');
+    }
+  };
+
+  const handleSubmitUpdate = async (event) => {
+    event.preventDefault();
+    const userId = localStorage.getItem('UserId');
+    if (!userId) {
+      console.error('UserId is not available in localStorage.');
+      alert('Unable to update wearing history. UserId is missing.');
+      return;
+    }
+
+    const formData = new FormData(event.target);
+    formData.append('UserId', userId);
+    formData.append('Date', popupData.Date.toISOString().split('T')[0]); // Pre-fill Date
+
+    // console.log("FormData content:");
+    // for (const [key, value] of formData.entries()) {
+    //   console.log(`${key}: ${value}`);
+    // }
+
+    const keysToRemove = [];
+    for (const [key, value] of formData.entries()) {
+      if (key.startsWith('Cloth') && (!value || value.trim() === '')) {
+        keysToRemove.push(key);
+      }
+    }
+
+    // Remove keys marked for removal
+    keysToRemove.forEach((key) => formData.delete(key));
+
+    try {
+      const response = await axios.put('http://localhost:5050/api/wearingHistory', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      // Check if response is OK
+      // console.log(response);
+      if (response.data && response.data.error) {
+        console.error('Error in response data:', response.data.error);
+        alert(`Failed to add wearing history: ${response.data.error}`);
+        return;
+      }
+
+      alert('Wearing history updated successfully!');
+      setIsEditing(false); // Exit edit mode
+      closePopup(); // Close popup
+      // Refresh wearing history
+      const updatedResponse = await axios.get('http://localhost:5050/api/wearingHistory', {
+        params: { UserId: userId },
+      });
+      const updatedData = updatedResponse.data.map((item) => ({
+        ...item,
+        Date: new Date(item.Date),
+      }));
+      setWearingHistory(updatedData);
+    } catch (error) {
+      console.error('Error updating wearing history:', error);
+      alert('Failed to update wearing history.');
     }
   };
   
@@ -310,8 +378,54 @@ const Calendar = () => {
     navigate('/');
   };
 
-  console.log('Calendar');
-  console.log(calendarDays);
+  const handleDeleteHistory = async () => {
+    const userId = localStorage.getItem('UserId');
+    if (!userId) {
+      console.error('UserId is not available in localStorage.');
+      alert('Unable to delete history. UserId is missing.');
+      return;
+    }
+
+    try {
+      await axios.delete('http://localhost:5050/api/wearingHistory', {
+        params: {
+          Date: deleteDate.toISOString().split('T')[0],
+          UserId: userId,
+        },
+      });
+
+      alert('Wearing history deleted successfully!');
+      setIsDeletePopupOpen(false); // Close delete popup
+
+      // Refresh wearing history
+      const updatedResponse = await axios.get('http://localhost:5050/api/wearingHistory', {
+        params: { UserId: userId },
+      });
+      const updatedData = updatedResponse.data.map((item) => ({
+        ...item,
+        Date: new Date(item.Date),
+      }));
+      setWearingHistory(updatedData);
+    } catch (error) {
+      console.error('Error deleting wearing history:', error);
+      alert('Failed to delete wearing history.');
+    }
+  };
+
+  const openDeletePopup = () => {
+    setIsDeletePopupOpen(true);
+  };
+
+  const closeDeletePopup = () => {
+    setIsDeletePopupOpen(false);
+    setDeleteDate(null);
+  };
+
+  const handleDateChange = (event) => {
+    setDeleteDate(new Date(event.target.value));
+  };
+
+
 
   return (
     <div className="closet-container">
@@ -321,6 +435,7 @@ const Calendar = () => {
         <h2>{currentMonthName} {currentYear}</h2>
         <button className="nav-button" onClick={handleNextMonth}>▶</button>
         <button className="add-button" onClick={openAddPopup}>Add History</button>
+        <button className="add-button" onClick={openDeletePopup}>Delete History</button>
       </div>
 
       <div className="calendar-grid">
@@ -361,26 +476,6 @@ const Calendar = () => {
         ))}
       </div>
 
-      {/* Add History Popup */}
-      {/* {isAddPopupOpen && (
-        <div className="popup-overlay" onClick={closeAddPopup}>
-          <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-            <h3>Add Wearing History</h3>
-            <form onSubmit={handleSubmitWearingHistory}>
-              <input type="date" name="Date" required />
-              <input type="number" name="UserId" placeholder="User ID" required />
-              <input type="text" name="Cloth1" placeholder="Cloth1 ID" />
-              <input type="text" name="Cloth2" placeholder="Cloth2 ID" />
-              <input type="text" name="Cloth3" placeholder="Cloth3 ID" />
-              <input type="text" name="Cloth4" placeholder="Cloth4 ID" />
-              <input type="text" name="Cloth5" placeholder="Cloth5 ID" />
-              <button type="submit">Submit</button>
-            </form>
-            <button onClick={closeAddPopup} className="close-popup">Close</button>
-          </div>
-        </div>
-      )} */}
-      {/* Add History Popup */}
       {isAddPopupOpen && (
         <div className="popup-overlay" onClick={closeAddPopup}>
           <div className="popup-content" onClick={(e) => e.stopPropagation()}>
@@ -414,23 +509,62 @@ const Calendar = () => {
       {isPopupOpen && (
         <div className="popup-overlay" onClick={closePopup}>
           <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-            <h3>Worn Clothes</h3>
-            {popupData ? (
+            <h3>{isEditing ? "Edit Wearing History" : "Worn Clothes"}</h3>
+            {popupData && isEditing ? (
+              <form onSubmit={handleSubmitUpdate}>
+                {[1, 2, 3, 4, 5].map((num) => (
+                  <div key={num}>
+                    <label htmlFor={`Cloth${num}`}>Cloth {num}:</label>
+                    <select
+                      name={`Cloth${num}`}
+                      id={`Cloth${num}`}
+                      defaultValue={popupData[`Cloth${num}Id`] || ""}
+                    >
+                      <option value="">None</option>
+                      {clothesList.map((cloth) => (
+                        <option key={cloth.ClothId} value={cloth.ClothId}>
+                          {cloth.ClothName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ))}
+                <button type="submit">Save</button>
+              </form>
+            ) : (
               <ul>
                 {[1, 2, 3, 4, 5].map((num, index) => {
                   const nameKey = `Cloth${num}Name`;
-                  const idKey = `Cloth${num}Id`; // Assuming ClothId is available
                   return popupData[nameKey] ? (
                     <li key={index}>
-                      <strong>#{index + 1}</strong>: {popupData[nameKey]} 
+                      <strong>#{index + 1}</strong>: {popupData[nameKey]}
                     </li>
                   ) : null;
                 })}
               </ul>
-            ) : (
-              <p>No data available</p>
+            )}
+            {!isEditing && (
+              <button onClick={openEditPopup} className="edit-button">Edit</button>
             )}
             <button onClick={closePopup} className="close-popup">Close</button>
+          </div>
+        </div>
+      )}
+
+      {isDeletePopupOpen && (
+        <div className="popup-overlay" onClick={closeDeletePopup}>
+          <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Delete Wearing History</h3>
+            <p>Select a date to delete:</p>
+            <input type="date" onChange={handleDateChange} />
+            <button
+              onClick={handleDeleteHistory}
+              disabled={!deleteDate}
+              className="confirm-delete-button"
+            >
+              Confirm Delete
+            </button>
+            <button onClick={closeDeletePopup} className="close-popup">Cancel</button>
           </div>
         </div>
       )}

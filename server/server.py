@@ -343,12 +343,12 @@ def get_wearing_history():
                 sql = """
                     SELECT 
                         WH.Date,
-                        C1.ClothName AS Cloth1Name, C1.Image AS Cloth1Image,
-                        C2.ClothName AS Cloth2Name, C2.Image AS Cloth2Image,
-                        C3.ClothName AS Cloth3Name, C3.Image AS Cloth3Image,
-                        C4.ClothName AS Cloth4Name, C4.Image AS Cloth4Image,
-                        C5.ClothName AS Cloth5Name, C5.Image AS Cloth5Image
-                    FROM 
+                        C1.ClothName AS Cloth1Name, C1.Image AS Cloth1Image, Cloth1 AS Cloth1Id,
+                        C2.ClothName AS Cloth2Name, C2.Image AS Cloth2Image, Cloth2 AS Cloth2Id,
+                        C3.ClothName AS Cloth3Name, C3.Image AS Cloth3Image, Cloth3 AS Cloth3Id,
+                        C4.ClothName AS Cloth4Name, C4.Image AS Cloth4Image, Cloth4 AS Cloth4Id,
+                        C5.ClothName AS Cloth5Name, C5.Image AS Cloth5Image, Cloth5 AS Cloth5Id
+                    FROM
                         WearingHistory WH
                     LEFT JOIN 
                         Clothes C1 ON C1.ClothId = WH.Cloth1
@@ -688,5 +688,73 @@ def get_colors():
         print('Error:', e)
         return jsonify({'error': str(e)})
 
+
+
+@app.route('/api/recommendationResult', methods=['GET'])
+def get_ootd():
+    try:
+        UserId = request.args.get('UserId', None)
+        Category = request.args.get('Category', None)
+        Color = request.args.get('Color', None)
+        Usages = request.args.get('Usages', None)
+        CurrentTemperature = request.args.get('CurrentTemperature', None)
+        
+        if UserId is not None:
+            print(f"GET /api/recommendationResult: UserId {UserId}")
+            
+            with db.cursor() as cursor:
+                sql = """
+                    SELECT *
+                    FROM Clothes c
+                    NATURAL JOIN Temperature t
+                    LEFT JOIN WearingHistory wh
+                        ON (
+                            c.ClothId = wh.Cloth1 OR 
+                            c.ClothId = wh.Cloth2 OR 
+                            c.ClothId = wh.Cloth3 OR 
+                            c.ClothId = wh.Cloth4 OR 
+                            c.ClothId = wh.Cloth5
+                        )
+                    WHERE c.UserId = %s
+                    AND c.Category = %s
+                    AND c.Color = %s
+                    AND c.Usages = %s
+                    AND %s >= t.TemperatureMin 
+                    AND %s <= t.TemperatureMax
+                    AND (
+                        NOT EXISTS (
+                            SELECT 1 
+                            FROM WearingHistory sub_wh
+                            WHERE (
+                                sub_wh.Cloth1 = c.ClothId OR 
+                                sub_wh.Cloth2 = c.ClothId OR 
+                                sub_wh.Cloth3 = c.ClothId OR 
+                                sub_wh.Cloth4 = c.ClothId OR 
+                                sub_wh.Cloth5 = c.ClothId
+                            )
+                            AND sub_wh.Date >= DATE_SUB(CURRENT_DATE, INTERVAL 14 DAY)
+                        )
+                    );
+
+                """
+     
+                cursor.execute(sql, (UserId, Category, Color, Usages, CurrentTemperature, CurrentTemperature))
+                results = cursor.fetchall()
+                response_data = jsonify(results).get_data().decode('utf8')
+                response = make_response(response_data)
+                response.headers['Content-Type'] = 'application/json'
+                return response
+        else:
+            return jsonify({'error': 'Invalid UserId'})
+    except Exception as e:
+        print('Error:', e)
+        return jsonify({'error': str(e)})
+
+
+
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5050,debug=True)
+
+
+    

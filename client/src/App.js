@@ -28,11 +28,12 @@ import Closet from './Closet'; // Import your Closet component
 import Calendar from './Calendar'; // Import your Calendar component
 import NavBar from './components/NavBar';
 import Login from './Login';
+import Register from './Register';
 import TodayOutfit from './TodayOutfit';
 
 const App = () => {
   const location = useLocation(); // Get the current location
-  const pathsWithoutNavBar = ['/', '/login']; // Define routes without NavBar
+  const pathsWithoutNavBar = ['/', '/login','/register']; // Define routes without NavBar
 
   return (
     <>
@@ -43,6 +44,7 @@ const App = () => {
         <Route path="/closet" element={<Closet />} />
         <Route path="/calendar" element={<Calendar />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/outfit" element={<TodayOutfit />} />
       </Routes>
     </>
