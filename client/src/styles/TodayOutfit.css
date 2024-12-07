@@ -1,4 +1,4 @@
-.closet-container {
+/* .closet-container {
     padding: 20px;
     font-family: Arial, sans-serif;
   }
@@ -40,4 +40,149 @@
     border: none;
     cursor: pointer;
   }
-  
+
+
+.clothes-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+  gap: 16px; 
+  margin: 20px 0;
+  padding: 0 10px;
+}
+
+
+.cloth-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+
+.cloth-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+
+.cloth-image {
+  width: 100%;
+  max-width: 120px;
+  height: auto; 
+  border-radius: 6px;
+}
+
+
+.clothes-gallery p {
+  font-size: 16px;
+  color: #666;
+  text-align: center;
+  margin: 20px 0;
+}
+ */
+
+ .closet-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #F2EEEE; /* 與 Closet.css 的背景一致 */
+  border: 2px solid #E3DBDB; /* 添加邊框與 Closet.css 匹配 */
+  border-radius: 8px; /* 圓角處理 */
+}
+
+/* Dropdown style */
+.dropdown {
+  margin: 20px 0;
+}
+
+.dropdown-button {
+  padding: 10px;
+  border: 2px solid #705C5C; /* 深色邊框 */
+  background-color: #F1EEEE; /* 淺灰色背景 */
+  cursor: pointer;
+  font-weight: bold;
+  color: #2A2222; /* 深棕色字體 */
+  border-radius: 5px;
+}
+
+.dropdown-menu {
+  border: 2px solid #E3DBDB; /* 與 Closet.css 的邊框一致 */
+  background-color: #F9F4EC; /* 更柔和的淺色背景 */
+  padding: 10px;
+  margin-top: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+  border-radius: 5px; /* 圓角邊框 */
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  color: #2A2222; /* 深色字體 */
+}
+
+.dropdown-item input {
+  margin-right: 8px;
+}
+
+/* Logout button style */
+.logout-button {
+  padding: 10px 20px;
+  background-color: #8FB7FC; /* 原始藍色 */
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px; /* 圓角 */
+}
+
+/* Clothes gallery */
+.clothes-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+  padding: 0 10px;
+}
+
+.cloth-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #E3DBDB; /* 邊框與 Closet.css 一致 */
+  border-radius: 8px; /* 圓角 */
+  padding: 8px;
+  background-color: #FFFFFF; /* 白色背景 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover effect */
+.cloth-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Cloth image style */
+.cloth-image {
+  width: 100%;
+  max-width: 120px;
+  height: auto;
+  border-radius: 6px; /* 圓角處理 */
+}
+
+/* No clothes found message */
+.clothes-gallery p {
+  font-size: 16px;
+  color: #2A2222; /* 深色文字 */
+  text-align: center;
+  margin: 20px 0;
+}

@@ -20,9 +20,12 @@ const ItemModal = ({ item, closeModal }) => {
     TemperatureLevel: item.TemperatureLevel || '',
   });
   const [groups, setGroups] = useState([]); 
+  const [itemGroups, setItemGroups] = useState([]);
   const [selectedGroups, setSelectedGroups] = useState([]); 
   const [includeData, setIncludeData] = useState([]);
   const [tags, setTags] = useState([]); 
+  const [showCreateGroup, setShowCreateGroup] = useState(false);
+  const [newGroupName, setNewGroupName] = useState('');
 
 
   useEffect(() => {
@@ -50,11 +53,22 @@ const ItemModal = ({ item, closeModal }) => {
     // fetchGroups();
     const fetchTags = async () => {
       try {
-        const TagsResponse = await axios.get(`http://localhost:5050/api/tags`, {
-          params: { ClothId: item.ClothId },
-        });
+        // const TagsResponse = await axios.get(`http://localhost:5050/api/tags`, {
+        //   params: { ClothId: item.ClothId },
+        // });
+
+        const [TagsResponse, FavGroupsResponse] = await Promise.all([
+          axios.get(`http://localhost:5050/api/tags?ClothId=${item.ClothId}`),
+          axios.get(`http://localhost:5050/api/favoriteGroups?UserId=${item.UserId}`)
+        ]);
+
         setTags(TagsResponse.data);  
         console.log(TagsResponse.data);
+
+        setGroups(FavGroupsResponse.data);
+        console.log('Favorite Groups:', FavGroupsResponse.data);
+        const itemGroupIds = TagsResponse.data.map((tag) => tag.FavoriteId);
+        setItemGroups(itemGroupIds);
 
       } catch (error) {
         console.error('Error fetching groups:', error);
@@ -63,6 +77,137 @@ const ItemModal = ({ item, closeModal }) => {
     fetchTags();
   }, []);
 
+  // const toggleGroupMembership = async (groupId) => {
+  //   try {
+  //     if (itemGroups.includes(groupId)) {
+  //       // Remove from group
+  //       await axios.delete(`http://localhost:5050/api/include`, {
+  //         data: { FavoriteId: groupId, ClothId: item.ClothId },
+  //       });
+  //       setItemGroups((prev) => prev.filter((id) => id !== groupId));
+  //     } else {
+  //       // Add to group
+  //       await axios.post(`http://localhost:5050/api/include`, {
+  //         FavoriteId: groupId,
+  //         ClothId: item.ClothId,
+  //       });
+  //       setItemGroups((prev) => [...prev, groupId]);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error updating group membership:', error);
+  //   }
+  // };
+  // const toggleGroupMembership = async (groupId) => {
+  //   try {
+  //     console.log('In toggleGroupMembership, groupId:', groupId);
+  //     if (itemGroups.includes(groupId)) {
+  //       // Use params for DELETE
+  //       // const response = await axios.delete(`http://localhost:5050/api/include`, {
+  //       //   params: { FavoriteId: groupId, ClothId: item.ClothId },
+  //       // });
+
+  //       const formData = new FormData();
+  //       formData.append('FavoriteId', groupId);
+  //       formData.append('ClothId', item.ClothId); 
+    
+       
+    
+  //       const response = await axios.delete('http://localhost:5050/api/include', formData, {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //       });
+
+
+  //       console.log('Delete Response:', response.data);
+  //       setItemGroups((prev) => prev.filter((id) => id !== groupId));
+  //     } else {
+  //       // Use JSON body for POST
+  //       const response = await axios.post(`http://localhost:5050/api/include`, {
+  //         FavoriteId: groupId,
+  //         ClothId: item.ClothId,
+  //       });
+  //       console.log('Post Response:', response.data);
+  //       setItemGroups((prev) => [...prev, groupId]);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error updating group membership:', error);
+  //   }
+  // };
+  const toggleGroupMembership = async (groupId) => {
+    try {
+      console.log('In toggleGroupMembership, groupId:', groupId);
+  
+      if (itemGroups.includes(groupId)) {
+        // Use FormData for DELETE
+        const formData = new FormData();
+        formData.append('FavoriteId', groupId);
+        formData.append('ClothId', item.ClothId);
+  
+        const response = await axios.delete('http://localhost:5050/api/include', {
+          data: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        console.log('Delete Response:', response.data);
+        setItemGroups((prev) => prev.filter((id) => id !== groupId));
+      } else {
+        // Use FormData for POST
+        const formData = new FormData();
+        formData.append('FavoriteId', groupId);
+        formData.append('ClothId', item.ClothId);
+  
+        const response = await axios.post('http://localhost:5050/api/include', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        console.log('Post Response:', response.data);
+        setItemGroups((prev) => [...prev, groupId]);
+      }
+    } catch (error) {
+      console.error('Error updating group membership:', error);
+    }
+  };
+  const handleCreateGroup = async (event) => {
+    event.preventDefault(); // Prevent the default form submission
+  
+    const formData = new FormData();
+    formData.append("UserId", item.UserId); // Add the UserId
+    formData.append("GroupName", newGroupName.trim()); // Add the new group name
+  
+    console.log("FormData contents:");
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+  
+    try {
+      // Make a POST request to the backend API
+      const response = await axios.post("http://localhost:5050/api/favoriteGroups", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+  
+      console.log("New group created:", response.data);
+  
+      // Update the local group list with the new group
+      setGroups((prevGroups) => [
+        ...prevGroups,
+        { FavoriteId: response.data.FavoriteId, GroupName: newGroupName },
+      ]);
+  
+      // Clear input and close modal
+      setShowCreateGroup(false);
+      setNewGroupName(""); // Clear the input
+    } catch (error) {
+      console.error("Error creating group:", error);
+      alert("Failed to create a new group. Please try again.");
+    }
+  };
   const handleGroupClick = (groupName) => {
     setSelectedGroups((prev) =>
       prev.includes(groupName) ? prev.filter((g) => g !== groupName) : [...prev, groupName]
@@ -171,13 +316,14 @@ const ItemModal = ({ item, closeModal }) => {
                   <label>Temperature Level:</label>
                   <span>{item.TemperatureLevel}</span>
                 </div>
+              
                 <div className="display-field">
-                  <label>In Favorite Group:</label>
-                  <span>
-                    {Array.isArray(includeData) && includeData.some((include) => include.ClothId === item.ClothId)
-                      ? 'Yes'
-                      : 'No'}
-                  </span>
+                  <label>Tags:</label>
+                  <p>
+                    {tags.length > 0
+                      ? tags.map((tag) => tag.GroupName || 'Unnamed Group').join(', ')
+                      : 'No tags associated'}
+                  </p>
                 </div>
               </>
             )}
@@ -198,33 +344,55 @@ const ItemModal = ({ item, closeModal }) => {
         </div> */}
         
       
-        <div className="tags-section">
-          {tags.length > 0 ? (
-            tags.map((group) => {
-              const isInGroup = Array.isArray(includeData)
-                ? includeData.some(
-                    (include) => include.FavoriteId === group.FavoriteId && include.ClothId === item.ClothId
-                  )
-                : false;
+      
+        {/* <div className="tags-section">
+          {isEditing && groups.length > 0 ? (
+            groups.map((group) => {
+              const isInGroup = itemGroups.includes(group.FavoriteId);
 
               return (
                 <button
                   key={group.FavoriteId}
                   className={`tag-button ${isInGroup ? 'in-group' : ''}`}
-                  onClick={() => handleGroupClick(group)}
+                  onClick={() => toggleGroupMembership(group.FavoriteId)}
                   style={{
                     backgroundColor: isInGroup ? '#4CAF50' : '#f0f0f0',
                     color: isInGroup ? '#fff' : '#000',
                   }}
                 >
-                  {group.GroupName || "Unnamed Group"} 
+                  {group.GroupName || 'Unnamed Group'}
                 </button>
               );
             })
-          ) : (
+          ) : isEditing && groups.length === 0 ? (
             <p>No groups found.</p>
+          ) : null}
+        </div> */}
+        <div className="tags-section">
+          {isEditing && (
+            <>
+              {groups.length > 0 ? (
+                groups.map((group) => {
+                  const isInGroup = itemGroups.includes(group.FavoriteId);
+
+                  return (
+                    <button
+                      key={group.FavoriteId}
+                      className={`tag-button ${isInGroup ? 'in-group' : ''}`}
+                      onClick={() => toggleGroupMembership(group.FavoriteId)}
+                    >
+                      {group.GroupName || 'Unnamed Group'}
+                    </button>
+                  );
+                })
+              ) : (
+                <p className="no-groups">No groups found.</p>
+              )}
+            </>
           )}
         </div>
+       
+         
         
     
 
@@ -245,7 +413,13 @@ const ItemModal = ({ item, closeModal }) => {
 export default ItemModal;
 
 
+// ============================================================================
 
+
+
+
+
+// ============================================================================
 
 // import React, { useState, useEffect } from 'react';
 // import axios from 'axios';

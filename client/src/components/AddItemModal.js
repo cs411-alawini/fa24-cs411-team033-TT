@@ -20,19 +20,38 @@ const AddItemModal = ({ isOpen, closeModal, onSave }) => {
     const file = event.target.files[0];
     setImageFile(file);
   };
-
   
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     // Create a FormData object to send text fields and the image file
+    const userId = localStorage.getItem('UserId');
+    if (!userId) {
+      alert("UserId not found. Please log in.");
+      return;
+    }
+
+    const clothName = event.target.ClothName.value;
+    const category = event.target.Category.value;
+    const subCategory = event.target.Subcategory.value;
+    const color = event.target.Color.value;
+    const usages = event.target.Usages.value;
+    const temperatureLevel = event.target.TemperatureLevel.value;
+
+    // Validate form inputs
+    if (!clothName || !category || !subCategory || !color || !usages || !temperatureLevel || !imageFile) {
+      alert("Please fill in all fields and upload an image.");
+      return;
+    }
+
     const formData = new FormData();
-    formData.append("ClothName", event.target.ClothName.value);
-    formData.append("Category", event.target.Category.value);
-    formData.append("SubCategory", event.target.Subcategory.value);
-    formData.append("Color", event.target.Color.value);
-    formData.append("Usages", event.target.Usages.value);
-    formData.append("TemperatureLevel", event.target.TemperatureLevel.value);
+    formData.append("UserId", userId);
+    formData.append("ClothName", clothName);
+    formData.append("Category", category);
+    formData.append("SubCategory", subCategory);
+    formData.append("Color", color);
+    formData.append("Usages", usages);
+    formData.append("TemperatureLevel", temperatureLevel);
     formData.append("Image", imageFile);
 
     console.log('FormData contents:');
@@ -95,14 +114,7 @@ const AddItemModal = ({ isOpen, closeModal, onSave }) => {
             <div className="image-placeholder">Add Image</div>
             <input type="file" name="image" accept="image/*" onChange={handleImageUpload}/>
           </div>
-          <div className="tags-section">
-            <button type="button" className="tag-button">tag 1</button>
-            <button type="button" className="tag-button">tag 2</button>
-            <button type="button" className="tag-button">tag 3</button>
-            <button type="button" className="create-tag-button">Create Tag</button>
-          </div>
-          <button type="submit" className="save-button">Save</button>
-          <button type="button" className="delete-button">Delete</button>
+          <button type="submit" className="save-button">Add</button>
         </form>
       </div>
     </div>

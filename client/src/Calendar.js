@@ -351,7 +351,7 @@ const Calendar = () => {
       // console.log(response);
       if (response.data && response.data.error) {
         console.error('Error in response data:', response.data.error);
-        alert(`Failed to add wearing history: ${response.data.error}`);
+        alert(`Failed to update wearing history: ${response.data.error}`);
         return;
       }
 
@@ -386,13 +386,35 @@ const Calendar = () => {
       return;
     }
 
+    const formData = new FormData();
+    formData.append('UserId', userId);
+    formData.append('Date', deleteDate.toISOString().split('T')[0]); 
+    
+    const dateExists = wearingHistory.some(history => 
+      history.Date.toISOString().split('T')[0] === deleteDate.toISOString().split('T')[0]
+    );
+
+    if (!dateExists) {
+        // console.error('The specified date does not exist in wearingHistory.');
+        alert('Unable to delete history. The specified date does not exist.');
+        return;
+    }
+
     try {
-      await axios.delete('http://localhost:5050/api/wearingHistory', {
-        params: {
-          Date: deleteDate.toISOString().split('T')[0],
-          UserId: userId,
+
+      const response = await axios.delete('http://localhost:5050/api/wearingHistory', {
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
+        data: formData, // Use `data` to send the payload with DELETE
       });
+
+      console.log(response.data);
+      if (response.data && response.data.error) {
+        console.error('Error in response data:', response.data.error);
+        alert(`Failed to delete wearing history: ${response.data.error}`);
+        return;
+      }
 
       alert('Wearing history deleted successfully!');
       setIsDeletePopupOpen(false); // Close delete popup
