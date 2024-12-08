@@ -177,3 +177,22 @@
   .close-popup:hover {
     background-color: #d32f2f;
   }
+
+  .post-outfit-button{
+    background-color: #F1EEEE;
+    color: #2A2222;
+    border: 2px solid #705c5c;
+    border-radius: 7px;
+    cursor: pointer;
+    padding: 5px 10px;
+    margin-left: 5px;
+    font-weight: bold;
+  }
+
+  .nav-button{
+    background-color: #F1EEEE;
+    border: 2px solid #705c5c;
+    border-radius: 7px;
+    padding: 3px 5px;
+    margin-left: 5px;
+  }

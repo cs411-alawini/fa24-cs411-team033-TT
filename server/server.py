@@ -258,55 +258,6 @@ def register():
 
     return jsonify({"message": "Registration successful"}), 201
 
-
-# @app.route('/api/wearingHistory', methods=['GET'])
-# def get_wearing_history():
-#     try:
-#         with db.cursor() as cursor:
-#             UserId = request.args.get('UserId', None)
-#             print(f"GET /api/wearingHistory: UserId {UserId}")
-#             if UserId is not None:
-#                 # Execute SQL query
-#                 sql = """
-#                     SELECT 
-#                         WH.Date,
-#                         C1.ClothName AS Cloth1Name, C1.Image AS Cloth1Image,
-#                         C2.ClothName AS Cloth2Name, C2.Image AS Cloth2Image,
-#                         C3.ClothName AS Cloth3Name, C3.Image AS Cloth3Image,
-#                         C4.ClothName AS Cloth4Name, C4.Image AS Cloth4Image,
-#                         C5.ClothName AS Cloth5Name, C5.Image AS Cloth5Image
-#                     FROM 
-#                         WearingHistory WH
-#                     LEFT JOIN 
-#                         Clothes C1 ON C1.ClothId = WH.Cloth1
-#                     LEFT JOIN 
-#                         Clothes C2 ON C2.ClothId = WH.Cloth2
-#                     LEFT JOIN 
-#                         Clothes C3 ON C3.ClothId = WH.Cloth3
-#                     LEFT JOIN 
-#                         Clothes C4 ON C4.ClothId = WH.Cloth4
-#                     LEFT JOIN 
-#                         Clothes C5 ON C5.ClothId = WH.Cloth5
-#                     WHERE 
-#                         WH.UserId = %s
-#                     ORDER BY 
-#                         WH.Date;
-#                     """
-#                 cursor.execute(sql, (UserId))
-#                 # Get query results
-#                 results = cursor.fetchall()
-#                 # Convert results to JSON format string and encode with UTF-8
-#                 response_data = jsonify(results).get_data().decode('utf8')
-#                 # Create a new response object and pass the encoded string as data
-#                 response = make_response(response_data)
-#                 response.headers['Content-Type'] = 'application/json'
-#                 return response
-#             else:
-#                 return jsonify({'error': 'Invalid data'})
-#     except Exception as e:
-#         print('Error:', e)
-#         return jsonify({'error': str(e)})
-
 @app.route('/api/wearingHistory', methods=['GET'])
 def get_wearing_history():
     try:
@@ -367,12 +318,12 @@ def post_wearing_history():
         Cloth4 = request.form.get('Cloth4', None)
         Cloth5 = request.form.get('Cloth5', None)
 
-        print(f"POST /api/clothes: value({WearingDate}, {UserId}, {Cloth1}, {Cloth2}, {Cloth3}, {Cloth4}, {Cloth5})")
+        print(f"POST /api/wearingHistory: value({WearingDate}, {UserId}, {Cloth1}, {Cloth2}, {Cloth3}, {Cloth4}, {Cloth5})")
         
         with db.cursor() as cursor:
             # Execute SQL query
             sql = """INSERT INTO WearingHistory
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, NULL)"""
             cursor.execute(sql, (WearingDate, UserId, Cloth1, Cloth2, Cloth3, Cloth4, Cloth5))
             db.commit()
             
@@ -407,23 +358,6 @@ def update_wearing_history():
         print('Error:', e)
         return jsonify({'error': str(e)})
 
-# @app.route('/api/wearingHistory', methods=['DELETE'])
-# def delete_wearing_history():
-#     try:
-#         WearingDate = request.form.get('Date')
-#         UserId = request.form.get('UserId')
-#         print(f"DELETE /api/wearingHistory: UserId {UserId} on {WearingDate}")
-#         with db.cursor() as cursor:
-#             # Execute SQL query
-#             sql = """DELETE FROM WearingHistory
-#                     WHERE Date = %s AND UserId = %s"""
-#             cursor.execute(sql, (WearingDate, UserId))
-#             db.commit()
-#             return jsonify({'message': f'WearingHistory {UserId} on {WearingDate} deleted'})
-#     except Exception as e:
-#         db.rollback()
-#         print('Error:', e)
-#         return jsonify({'error': str(e)})
 @app.route('/api/wearingHistory', methods=['DELETE'])
 def delete_wearing_history():
     conn = None
@@ -458,33 +392,6 @@ def delete_wearing_history():
         if conn:
             conn.close()
 
-# @app.route('/api/favoriteGroups', methods=['GET'])
-# def get_all_fav_groups():
-#     try:
-#         with db.cursor() as cursor:
-#             UserId = request.args.get('UserId', None)
-#             print(f"GET /api/favoriteGroups: UserId {UserId}")
-#             if UserId is not None:
-#                 # Execute SQL query
-#                 sql = """
-#                     SELECT *
-#                     FROM FavoriteGroups
-#                     WHERE UserId = %s
-#                     """
-#                 cursor.execute(sql, (UserId))
-#                 # Get query results
-#                 results = cursor.fetchall()
-#                 # Convert results to JSON format string and encode with UTF-8
-#                 response_data = jsonify(results).get_data().decode('utf8')
-#                 # Create a new response object and pass the encoded string as data
-#                 response = make_response(response_data)
-#                 response.headers['Content-Type'] = 'application/json'
-#                 return response
-#             else:
-#                 return jsonify({'error': 'Invalid data'})
-#     except Exception as e:
-#         print('Error:', e)
-#         return jsonify({'error': str(e)})
 @app.route('/api/favoriteGroups', methods=['GET'])
 def get_all_fav_groups():
     try:
@@ -665,33 +572,6 @@ def delete_include():
         print('Error:', e)
         return jsonify({'error': str(e)})
 
-# @app.route('/api/tags', methods=['GET'])
-# def get_tags():
-#     try:
-#         with db.cursor() as cursor:
-#             ClothId = request.args.get('ClothId', None)
-#             print(f"GET /api/tags: ClothId {ClothId}")
-#             if ClothId is not None:
-#                 # Execute SQL query
-#                 sql = """
-#                     SELECT *
-#                     FROM Include NATURAL JOIN FavoriteGroups
-#                     WHERE ClothId = %s
-#                     """
-#                 cursor.execute(sql, (ClothId))
-#                 # Get query results
-#                 results = cursor.fetchall()
-#                 # Convert results to JSON format string and encode with UTF-8
-#                 response_data = jsonify(results).get_data().decode('utf8')
-#                 # Create a new response object and pass the encoded string as data
-#                 response = make_response(response_data)
-#                 response.headers['Content-Type'] = 'application/json'
-#                 return response
-#             else:
-#                 return jsonify({'error': 'Invalid data'})
-#     except Exception as e:
-#         print('Error:', e)
-#         return jsonify({'error': str(e)})
 @app.route('/api/tags', methods=['GET'])
 def get_tags():
     try:
@@ -721,80 +601,6 @@ def get_tags():
         if 'conn' in locals():
             conn.close()
 
-# @app.route('/api/recommendationInputs', methods=['GET'])
-# def get_colors():
-#     try:
-#         with db.cursor() as cursor:
-#             UserId = request.args.get('UserId', None)
-#             print(f"GET /api/colors: UserId {UserId}")
-#             if UserId is not None:
-#                 # Execute SQL query
-#                 sql = """
-#                     SELECT DISTINCT Color AS Color, 'None' AS Usages
-#                     FROM Clothes
-#                     WHERE UserId = %s
-#                     UNION
-#                     SELECT DISTINCT 'None' AS Color, Usages AS Usages
-#                     FROM Clothes
-#                     WHERE UserId = %s
-#                     """
-#                 cursor.execute(sql, (UserId, UserId))
-#                 # Get query results
-#                 results = cursor.fetchall()
-#                 # Convert results to JSON format string and encode with UTF-8
-#                 response_data = jsonify(results).get_data().decode('utf8')
-#                 # Create a new response object and pass the encoded string as data
-#                 response = make_response(response_data)
-#                 response.headers['Content-Type'] = 'application/json'
-#                 return response
-#             else:
-#                 return jsonify({'error': 'Invalid data'})
-#     except Exception as e:
-#         print('Error:', e)
-#         return jsonify({'error': str(e)})
-    
-
-# @app.route('/api/recommendationInputs', methods=['GET'])
-# def get_colors():
-#     try:
-#         with db.cursor() as cursor:
-#             UserId = request.args.get('UserId', None)
-#             print(f"GET /api/colors: UserId {UserId}")
-#             if UserId is not None:
-#                 # Execute SQL query
-#                 sql = """
-#                     SELECT DISTINCT Color AS Color, 'None' AS Usages, 'None' AS Category
-#                     FROM Clothes
-#                     WHERE UserId = %s
-
-#                     UNION
-
-#                     SELECT DISTINCT 'None' AS Color, Usages AS Usages, 'None' AS Category
-#                     FROM Clothes
-#                     WHERE UserId = %s
-
-#                     UNION
-
-#                     SELECT DISTINCT 'None' AS Color, 'None' AS Usages, Category AS Category
-#                     FROM Clothes
-#                     WHERE UserId = %s
-
-#                     """
-#                 cursor.execute(sql, (UserId, UserId, UserId))
-#                 # Get query results
-#                 results = cursor.fetchall()
-#                 # Convert results to JSON format string and encode with UTF-8
-#                 response_data = jsonify(results).get_data().decode('utf8')
-#                 # Create a new response object and pass the encoded string as data
-#                 response = make_response(response_data)
-#                 response.headers['Content-Type'] = 'application/json'
-#                 return response
-#             else:
-#                 return jsonify({'error': 'Invalid data'})
-#     except Exception as e:
-#         print('Error:', e)
-#         return jsonify({'error': str(e)})
-    
 @app.route('/api/recommendationInputs', methods=['GET'])
 def get_colors():
     try:
@@ -858,42 +664,42 @@ def get_ootd():
         with db.cursor() as cursor:
             # 檢查並創建存儲過程
             create_procedure_sql = """
-            CREATE PROCEDURE GetRecommendedClothes(
-                IN p_UserId INT,
-                IN p_Category VARCHAR(255),
-                IN p_Color VARCHAR(255),
-                IN p_Usages VARCHAR(255),
-                IN p_CurrentTemperature INT
-            )
-            BEGIN
-                SELECT c.*,
-                       CASE
-                           WHEN c.Color = p_Color THEN 1 ELSE 0
-                       END +
-                       CASE
-                           WHEN c.Usages = p_Usages THEN 1 ELSE 0
-                       END +
-                       CASE
-                           WHEN p_CurrentTemperature > t.TemperatureMin AND p_CurrentTemperature < t.TemperatureMax THEN 1 ELSE 0
-                       END +
-                       CASE
-                           WHEN NOT EXISTS (
-                               SELECT 1
-                               FROM WearingHistory wh
-                               WHERE (wh.Cloth1 = c.ClothId OR 
-                                      wh.Cloth2 = c.ClothId OR 
-                                      wh.Cloth3 = c.ClothId OR 
-                                      wh.Cloth4 = c.ClothId OR 
-                                      wh.Cloth5 = c.ClothId)
-                               AND wh.Date >= DATE_SUB(CURRENT_DATE, INTERVAL 14 DAY)
-                           ) THEN 1 ELSE 0
-                       END AS Score
-                FROM Clothes c
-                NATURAL JOIN Temperature t
-                WHERE c.UserId = p_UserId
-                  AND c.Category = p_Category
-                ORDER BY Score DESC;
-            END;
+                CREATE PROCEDURE GetRecommendedClothes(
+                    IN p_UserId INT,
+                    IN p_Category VARCHAR(255),
+                    IN p_Color VARCHAR(255),
+                    IN p_Usages VARCHAR(255),
+                    IN p_CurrentTemperature INT
+                )
+                BEGIN
+                    SELECT c.*,
+                            CASE
+                                WHEN c.Color = p_Color THEN 1 ELSE 0
+                            END +
+                            CASE
+                                WHEN c.Usages = p_Usages THEN 1 ELSE 0
+                            END +
+                            CASE
+                                WHEN p_CurrentTemperature > t.TemperatureMin AND p_CurrentTemperature < t.TemperatureMax THEN 1 ELSE 0
+                            END +
+                            CASE
+                                WHEN NOT EXISTS (
+                                    SELECT 1
+                                    FROM WearingHistory wh
+                                    WHERE (wh.Cloth1 = c.ClothId OR 
+                                            wh.Cloth2 = c.ClothId OR 
+                                            wh.Cloth3 = c.ClothId OR 
+                                            wh.Cloth4 = c.ClothId OR 
+                                            wh.Cloth5 = c.ClothId)
+                                    AND wh.Date >= DATE_SUB(CURRENT_DATE, INTERVAL 14 DAY)
+                                ) THEN 1 ELSE 0
+                            END AS Score
+                    FROM Clothes c
+                    NATURAL JOIN Temperature t
+                    WHERE c.UserId = p_UserId
+                        AND c.Category = p_Category
+                    ORDER BY Score DESC;
+                END;
             """
             try:
                 cursor.execute("DROP PROCEDURE IF EXISTS GetRecommendedClothes;")
@@ -920,73 +726,6 @@ def get_ootd():
         error_message = traceback.format_exc()
         print('Error Traceback:', error_message)
         return jsonify({'error': str(e), 'trace': error_message})
-    
-
-
-# @app.route('/api/colorfrequency', methods=['GET'])
-# def get_color_frequency():
-#     try:
-#         # Get parameters from the request
-#         UserId = request.args.get('UserId', None, type=int)
-#         IntervalDays = request.args.get('IntervalDays', None, type=int)
-
-#         # Validate parameters
-#         if UserId is None or IntervalDays is None:
-#             return jsonify({'error': 'Missing required parameters: UserId, or IntervalDays'}), 400
-
-#         with db.cursor() as cursor:
-#             # Check and create the stored procedure if it does not exist
-#             create_procedure_sql = """
-#             CREATE PROCEDURE GetColorFrequency(
-#                 IN input_UserId INT,
-#                 IN input_IntervalDays INT
-#             )
-#             BEGIN
-#                 IF input_IntervalDays <= 0 THEN
-#                     SELECT 'Error: The interval days must be greater than 0' AS ErrorMessage;
-#                 ELSE
-#                     SELECT c.Color, 
-#                         COUNT(*) AS ColorFrequency
-#                     FROM WearingHistory wh
-#                     JOIN Clothes c 
-#                         ON wh.Cloth1 = c.ClothId OR wh.Cloth2 = c.ClothId 
-#                         OR wh.Cloth3 = c.ClothId OR wh.Cloth4 = c.ClothId 
-#                         OR wh.Cloth5 = c.ClothId
-#                     WHERE wh.UserId = input_UserId
-#                     AND wh.Date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL input_IntervalDays DAY) 
-#                                     AND CURRENT_DATE
-#                     AND c.Color IS NOT NULL
-#                     GROUP BY c.Color
-#                     ORDER BY ColorFrequency DESC;
-#                 END IF;
-#             END;
-
-#             """
-#             try:
-#                 cursor.execute("DROP PROCEDURE IF EXISTS GetColorFrequency;")
-#                 cursor.execute(create_procedure_sql)
-#             except Exception as e:
-#                 print("Error creating procedure:", str(e))
-
-#             # Call the stored procedure
-#             print("Calling procedure with:", UserId, IntervalDays)
-#             call_procedure_sql = "CALL GetColorFrequency(%s, %s)"
-#             cursor.execute(call_procedure_sql, (UserId, IntervalDays))
-#             results = cursor.fetchall()
-
-#             # Process results
-#             if not results:
-#                 return jsonify({'error': 'No data found for the given criteria'}), 404
-
-#             response_data = jsonify(results).get_data().decode('utf8')
-#             response = make_response(response_data)
-#             response.headers['Content-Type'] = 'application/json'
-#             return response
-#     except Exception as e:
-#         import traceback
-#         error_message = traceback.format_exc()
-#         print('Error Traceback:', error_message)
-#         return jsonify({'error': str(e), 'trace': error_message}), 500
 
 @app.route('/api/colorfrequency', methods=['GET'])
 def get_color_frequency():
@@ -1059,14 +798,266 @@ def get_color_frequency():
         if 'conn' in locals():
             conn.close()
 
+@app.route('/api/posts', methods=['GET'])
+def get_all_posts():
+    try:
+        # Get a connection from the pool
+        Today = request.args.get('Date', None)
+        conn = pool.connection()
+        if Today:
+            with conn.cursor() as cursor:
+                print(f"GET /api/posts")
+                # Execute SQL query
+                sql = """
+                    SELECT 
+                        Posts.PostId,
+                        Posts.Description,
+                        Users.FirstName,
+                        Users.LastName,
+                        WH.Date,
+                        Users.Votes,
+                        C1.ClothName AS Cloth1Name, C1.Image AS Cloth1Image, Cloth1 AS Cloth1Id,
+                        C2.ClothName AS Cloth2Name, C2.Image AS Cloth2Image, Cloth2 AS Cloth2Id,
+                        C3.ClothName AS Cloth3Name, C3.Image AS Cloth3Image, Cloth3 AS Cloth3Id,
+                        C4.ClothName AS Cloth4Name, C4.Image AS Cloth4Image, Cloth4 AS Cloth4Id,
+                        C5.ClothName AS Cloth5Name, C5.Image AS Cloth5Image, Cloth5 AS Cloth5Id
+                    FROM
+                        WearingHistory WH
+                    NATURAL JOIN Posts
+                    LEFT JOIN 
+                        Clothes C1 ON C1.ClothId = WH.Cloth1
+                    LEFT JOIN 
+                        Clothes C2 ON C2.ClothId = WH.Cloth2
+                    LEFT JOIN 
+                        Clothes C3 ON C3.ClothId = WH.Cloth3
+                    LEFT JOIN 
+                        Clothes C4 ON C4.ClothId = WH.Cloth4
+                    LEFT JOIN 
+                        Clothes C5 ON C5.ClothId = WH.Cloth5
+                    LEFT JOIN Users ON Users.UserId = WH.UserId
+                    WHERE 
+                        WH.Date = %s
+                """
+                cursor.execute(sql, (Today))
+                # Get query results
+                results = cursor.fetchall()
+                return jsonify(results)
+    except Exception as e:
+        print('Error:', e)
+        return jsonify({'error': str(e)})
+    finally:
+        # Ensure the connection is returned to the pool
+        if 'conn' in locals():
+            conn.close()
 
+@app.route('/api/votes', methods=['GET'])
+def get_votes():
+    try:
+        Today = request.args.get('Date', None)
+        UserId = request.args.get('UserId', None)
+        if Today and UserId:
+            conn = pool.connection()
+            print(f"GET /api/votes")
+            with conn.cursor() as cursor:
+                    cursor.execute("SELECT VoteNum FROM Votes WHERE Date=%s AND UserId=%s", (Today, UserId))
+                    votes = cursor.fetchone()
+                    if votes is None:
+                        cursor.execute("INSERT INTO Votes VALUES(%s, %s, 5)", (Today, UserId))
+                        cursor.execute("SELECT VoteNum FROM Votes WHERE Date=%s AND UserId=%s", (Today, UserId))
+                        votes = cursor.fetchone()
+                        conn.commit()
+                    return jsonify(votes)
+    except Exception as e:
+        db.rollback()
+        print('Error:', e)
+        return jsonify({'error': str(e)})
+    finally:
+        # Ensure the connection is returned to the pool
+        if 'conn' in locals():
+            conn.close()
+
+@app.route('/api/post', methods=['POST'])
+def post_today_wearing_history():
+    try:
+        Today = request.form.get('Date', None)
+        UserId = request.form.get('UserId', None)
+        Description = request.form.get('Description', None)
+
+        print(f"PUT /api/post: UserId ({UserId})")
+        if Today and UserId:
+            with db.cursor() as cursor:
+                # Execute SQL query
+                cursor.execute("INSERT INTO Posts VALUES(0, %s)", (Description))
+                postId = str(cursor.lastrowid)
+                sql = """UPDATE WearingHistory 
+                        SET PostId = %s
+                        WHERE Date = %s AND UserId = %s"""
+                cursor.execute(sql, (postId, Today, UserId))
+                db.commit()
+                
+                return jsonify({'message': f'outfit Posted: PostId: {postId}'})
+    except Exception as e:
+        db.rollback()
+        print('Error:', e)
+        return jsonify({'error': str(e)})
+    
+@app.route('/api/vote', methods=['POST', 'OPTIONS'])
+def vote():
+    try:
+        Today = request.form.get('Date', None)
+        UserId = request.form.get('UserId', None)
+        PostId = request.form.get('PostId', None)
+
+        print(f"POST /api/vote: User {UserId} vote for Post {PostId})")
+        if Today and UserId and PostId:
+            with db.cursor() as cursor:
+                # check votes you have
+                cursor.execute('SELECT VoteNum FROM Votes WHERE Date= %s AND UserId=%s', (Today, UserId))
+                votes = cursor.fetchone()
+                if votes == 0:
+                    return jsonify({"message": "Out of votes"}), 400
+                # remove one vote from User
+                # sql_remove = """UPDATE Votes
+                #                 SET VoteNum = 
+                #                     (SELECT VoteNum FROM Votes WHERE Date= %s AND UserId=%s) - 1
+                #                 WHERE Date=%s AND UserId=%s"""
+                # cursor.execute(sql_remove, (Today, UserId, Today, UserId))
+                # # add one vote to User
+                # sql_add = """UPDATE Users
+                #             SET Votes = 
+                #                 (SELECT Votes FROM WearingHistory NATURAL JOIN User WHERE PostId=%s)+1
+                #             WHERE UserId=(SELECT UserId FROM WearingHistory WHERE PostId=%s)"""
+
+                sql_remove = """UPDATE Votes
+                                SET VoteNum =  VoteNum - 1
+                                WHERE Date=%s AND UserId=%s"""
+                cursor.execute(sql_remove, (Today, UserId))
+
+                print(PostId)
+
+                # Add one vote to the 'Users' table
+                sql_add = """
+                    UPDATE Users AS u
+                    SET Votes = (
+                        SELECT temp.Votes + 1
+                        FROM (
+                            SELECT u2.Votes 
+                            FROM Users u2
+                            WHERE u2.UserId = (
+                                SELECT w.UserId
+                                FROM WearingHistory w
+                                WHERE w.PostId = %s
+                            )
+                        ) AS temp
+                    )
+                    WHERE u.UserId = (
+                        SELECT w.UserId
+                        FROM WearingHistory w
+                        WHERE w.PostId = %s
+                    );
+                """
+                
+                cursor.execute(sql_add, (PostId, PostId))
+                # add vote history
+                sql = """INSERT INTO VoteHistory
+                        VALUES (%s, %s, %s)"""
+                cursor.execute(sql, (Today, UserId, PostId))
+                db.commit()
+                
+                return jsonify({'message': 'voted'})
+    except Exception as e:
+        db.rollback()
+        print('Error:', e)
+        return jsonify({'error': str(e)})
+
+@app.route('/api/voted', methods=['GET'])
+def voted():
+    try:
+        Today = request.args.get('Date', None)
+        UserId = request.args.get('UserId', None)
+        if Today and UserId:
+            conn = pool.connection()
+            print(f"GET /api/voted")
+            with conn.cursor() as cursor:
+                    cursor.execute("SELECT PostId FROM VoteHistory WHERE Date=%s AND UserId=%s", (Today, UserId))
+                    posts = cursor.fetchall()
+                    return jsonify(posts)
+    except Exception as e:
+        print('Error:', e)
+        return jsonify({'error': str(e)})
+    finally:
+        # Ensure the connection is returned to the pool
+        if 'conn' in locals():
+            conn.close()
+
+@app.route('/api/unvote', methods=['POST', 'OPTIONS'])
+def unvote():
+    try:
+        Today = request.form.get('Date', None)
+        UserId = request.form.get('UserId', None)
+        PostId = request.form.get('PostId', None)
+
+        print(f"POST /api/vote: User {UserId} vote for Post {PostId})")
+        if Today and UserId and PostId:
+            with db.cursor() as cursor:
+                # add one vote to User
+                sql_remove = """UPDATE Votes
+                                SET VoteNum = (
+                                    SELECT temp.VoteNum + 1
+                                    FROM (
+                                        SELECT VoteNum
+                                        FROM Votes
+                                        WHERE Date=%s AND UserId=%s
+                                    ) AS temp
+                                )
+                                WHERE Date=%s AND UserId=%s"""
+                cursor.execute(sql_remove, (Today, UserId, Today, UserId))
+                # # remove one vote to User
+                # sql_add = """UPDATE Users
+                #             SET Votes = 
+                #                 (SELECT Votes FROM WearingHistory NATURAL JOIN User WHERE PostId=%s)-1
+                #             WHERE UserId=(SELECT UserId FROM WearingHistory WHERE PostId=%s)"""
+                # cursor.execute(sql_add, (PostId, PostId))
+                # # remove vote history
+                # sql = """DELETE FROM VoteHistory
+                #         WHERE Date=%s AND UserId=%s AND PostId=%s"""
+                # cursor.execute(sql, (Today, UserId, PostId))
+                # Remove one vote from the 'Users' table
+                sql_remove_vote = """
+                    UPDATE Users AS u
+                    SET Votes = (
+                        SELECT temp.Votes - 1
+                        FROM (
+                            SELECT u2.Votes 
+                            FROM Users u2
+                            WHERE u2.UserId = (
+                                SELECT w.UserId
+                                FROM WearingHistory w
+                                WHERE w.PostId = %s
+                            )
+                        ) AS temp
+                    )
+                    WHERE u.UserId = (
+                        SELECT w.UserId
+                        FROM WearingHistory w
+                        WHERE w.PostId = %s
+                    );
+                """
+                cursor.execute(sql_remove_vote, (PostId, PostId))
+
+                # Remove vote history
+                sql_delete_vote_history = """
+                    DELETE FROM VoteHistory
+                    WHERE Date = %s AND UserId = %s AND PostId = %s;
+                """
+                cursor.execute(sql_delete_vote_history, (Today, UserId, PostId))
+                db.commit()
+                
+                return jsonify({'message': 'voted'})
+    except Exception as e:
+        db.rollback()
+        print('Error:', e)
+        return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5050,debug=True)
-
-
-
-
-
-
-    

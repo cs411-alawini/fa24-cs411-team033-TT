@@ -48,6 +48,8 @@ const Calendar = () => {
   const [clothesList, setClothesList] = useState([]); // State for clothes data
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false); // State for delete popup visibility
   const [deleteDate, setDeleteDate] = useState(null); // Selected date for deletion
+  const [description, setDescription] = useState(""); // State for the text box
+
   const navigate = useNavigate();
 
   // useEffect(() => {
@@ -448,12 +450,60 @@ const Calendar = () => {
   };
 
 
+  const handlePostOutfit = async () => {
+    const userId = localStorage.getItem("UserId");
+    if (!userId) {
+      alert("UserId is not available in localStorage.");
+      return;
+    }
+
+
+    const formData = new FormData();
+    formData.append('UserId', userId);
+
+    // Get the current date in YYYY-MM-DD format
+    const currentDate = new Date().toLocaleDateString('en-CA');
+    formData.append('Date', currentDate);
+    formData.append('Description', description);
+
+    // console.log(currentDate);
+
+
+  
+    try {
+      const response = await axios.post(
+        "http://localhost:5050/api/post", formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      console.log(response.data);
+  
+      if (response.data.error) {
+        alert(`Error: ${response.data.error}`);
+      } else {
+        alert("Today's outfit has been successfully posted!");
+      }
+    } catch (error) {
+      console.error("Error posting outfit:", error);
+      alert("Failed to post today's outfit. Please try again.");
+    }
+  };
+
+
 
   return (
     <div className="closet-container">
 
       <div className="calendar-header">
-        <button className="post-outfit-button" onClick={() => alert('Posting Today\'s Outfit...')}>
+         <textarea
+            placeholder="Add a description..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            style={{ resize: "none", width: "200px", height: "30px" }}
+          />
+       
+      
+        <button className="post-outfit-button" onClick={handlePostOutfit}>
           Post My Today Outfit
         </button>
         <button className="nav-button" onClick={handlePrevMonth}>◀</button>

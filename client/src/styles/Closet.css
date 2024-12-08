@@ -1,86 +1,161 @@
-/* src/Closet.css */
+
+
+  
 
 .closet-container {
     width: 100%;
-    border: 2px solid black;
-    padding: 10px;
+    border: 3px solid #705c5c;
+    padding: 20px;
+    border-radius: 10px;
     box-sizing: border-box;
-  }
-  
-  .closet-header {
+    background-color: #F9F4EC;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.closet-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .logo {
-    width: 100px;
-    height: 50px;
-    border: 1px solid gray;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .search-bar {
+    margin-bottom: 20px;
+}
+
+.search-bar {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .search-bar input {
+    margin-bottom: 20px;
+}
+
+.search-bar input {
     width: 100%;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .search-button {
-    background: none;
-    border: none;
-    cursor: pointer;
+    padding: 10px;
+    border: 2px solid #705c5c;
+    border-radius: 7px;
+    font-size: 16px;
+    box-sizing: border-box;
+    background-color: #F9F4EC;
+    color: #2B2121;
+}
+
+.search-button {
+    background-color: #F1EEEE;
+    color: #2A2222;
+    border: 2px solid #705c5c;
+    border-radius: 7px;
     font-size: 1.2em;
+    cursor: pointer;
+    padding: 5px 10px;
     margin-left: 5px;
-  }
-  
-  .closet-grid {
+}
+
+.search-button:hover {
+    background-color: #E3DBDB;
+}
+
+.closet-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr); /* Fixed 7 columns */
-    gap: 10px;
-    margin-top: 10px;
-  }
-  
-  .closet-item {
+    grid-template-columns: repeat(7, 1fr); 
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.closet-item {
     width: 100%;
-    height: 100px; /* Adjust height as needed */
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f0f0f0; /* Light gray background for placeholders */
-  }
-  
-  .placeholder {
+    height: 120px; 
+    border: 2px solid #705c5c;
+    border-radius: 10px;
+    background-color: #F1EEEE;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #aaa;
-    font-size: 0.9em;
-  }
+    color: #2B2121;
+    font-size: 14px;
+}
 
-  .item-image {
-    width: 80px; /* Adjust width as needed */
-    height: auto; /* Keeps the aspect ratio */
-    max-height: 100px; /* Set a max height to prevent it from growing too large */
-    object-fit: cover; /* Ensures the image fills the space without distorting */
-    border-radius: 5px; /* Optional: adds rounded corners */
-  }
-
-  .filter-buttons {
+.placeholder {
     display: flex;
-    gap: 10px;
-    margin: 10px 0;
-  }
-  
-  .filter-button {
-    background-color: #e0e0e0
-  }
+    justify-content: center;
+    align-items: center;
+    color: #705C5C;
+    font-size: 0.9em;
+}
+
+.item-image {
+    width: 80px; 
+    height: auto; 
+    max-height: 100px; 
+    object-fit: cover;
+    border-radius: 5px;
+    border: 3px solid #705c5c;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+    justify-content: center;
+}
+
+.filter-button {
+    background-color: #F1EEEE;
+    color: #2A2222;
+    font-size: 16px;
+    font-weight: bold;
+    border: 2px solid #705c5c;
+    border-radius: 7px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+.search-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 10px;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  border: 2px solid #705c5c;
+  border-radius: 7px;
+}
+
+.search-bar button {
+  padding: 5px 10px;
+  font-size: 14px;
+  border-radius: 7px;
+  white-space: nowrap; 
+  cursor: pointer;
+}
+
+.add-button,
+.add-tag-button,
+.delete-tag-button {
+  padding: 5px 10px;
+  font-size: 14px;
+  background-color: #f1eeee;
+  color: #2a2222;
+  border: 2px solid #705c5c;
+  border-radius: 7px;
+  font-weight: bold;
+}
+
+
+.item-image {
+  border: 2px solid #705c5c;
+  /* position: relative; */
+  top: 15px;
+  width: auto; /* Adjust width as needed */
+  height: 150px; /* Keeps the aspect ratio */
+  max-height: 150px; /* Set a max height to prevent it from growing too large */
+  object-fit: cover; /* Ensures the image fills the space without distorting */
+  border-radius: 5px; /* Optional: adds rounded corners */
+}
+
+
+
+ 
