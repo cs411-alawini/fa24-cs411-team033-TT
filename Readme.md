@@ -16,6 +16,10 @@ https://github.com/user-attachments/assets/9787cdae-b577-47a9-8d7a-506891bb0aed
 ### Add/Update/Delete wearing history
 https://github.com/user-attachments/assets/0e58e1d7-0a9c-4c14-9957-ca12695ffd16
 
+## Posts
+### Post today outfit, Vote/Unvote outfits
+https://github.com/user-attachments/assets/a48bcff2-5dae-4bba-a74e-3ff19384fc76
+
 
 
 
