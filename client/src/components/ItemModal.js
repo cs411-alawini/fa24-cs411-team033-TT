@@ -286,8 +286,21 @@ const ItemModal = ({ item, closeModal }) => {
                   <input type="text" name="Usages" value={formData.Usages} onChange={handleChange} />
                 </div>
                 <div className="display-field">
-                  <label>Temperature Level:</label>
-                  <input type="text" name="TemperatureLevel" value={formData.TemperatureLevel} onChange={handleChange} />
+                  <label>
+                    Temperature Level (Min-Max):
+                    <select
+                      name="TemperatureLevel"
+                      value={formData.TemperatureLevel}
+                      onChange={handleChange}
+                    >
+                      <option value="0">45 - 85</option>
+                      <option value="1">70 - 100</option>
+                      <option value="2">40 - 70</option>
+                      <option value="3">0 - 60</option>
+                    </select>
+                  </label>
+                  {/* <label>Temperature Level:</label>
+                  <input type="text" name="TemperatureLevel" value={formData.TemperatureLevel} onChange={handleChange} /> */}
                 </div>
               </>
             ) : (
@@ -313,8 +326,12 @@ const ItemModal = ({ item, closeModal }) => {
                   <span>{item.Usages || 'N/A'}</span>
                 </div>
                 <div className="display-field">
-                  <label>Temperature Level:</label>
-                  <span>{item.TemperatureLevel}</span>
+                  <label>Temperature Min:</label>
+                  <span>{item.TemperatureMin}</span>
+                </div>
+                <div className="display-field">
+                  <label>Temperature Max:</label>
+                  <span>{item.TemperatureMax}</span>
                 </div>
               
                 <div className="display-field">

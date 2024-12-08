@@ -11,6 +11,7 @@ function NavBar() {
                 <NavLink className="nav-item" to="/closet">Closet</NavLink>
                 <NavLink className="nav-item" to="/calendar">Calendar</NavLink>
                 <NavLink className="nav-item" to="/outfit">Today's Outfit</NavLink>
+                <NavLink className="nav-item" to="/post">Posts</NavLink>
             </nav>
         </div>
     );

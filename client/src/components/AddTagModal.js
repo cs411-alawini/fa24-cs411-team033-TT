@@ -25,6 +25,9 @@ const AddTagModal = ({ isOpen, closeModal }) => {
       alert("Tag added successfully!");
       setGroupName('');
       closeModal();
+
+      // Refresh the page after successful API call
+      window.location.reload();
     } catch (error) {
       console.error("Error adding tag:", error);
       alert("Failed to add tag.");

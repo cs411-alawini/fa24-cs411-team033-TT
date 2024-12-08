@@ -43,6 +43,7 @@ const DeleteTagModal = ({ isOpen, closeModal }) => {
       alert('Tag deleted successfully!');
       setSelectedTag('');
       closeModal();
+      window.location.reload();
     } catch (error) {
       console.error('Error deleting tag:', error);
       alert('Failed to delete tag.');

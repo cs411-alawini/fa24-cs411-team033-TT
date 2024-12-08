@@ -106,9 +106,18 @@ const AddItemModal = ({ isOpen, closeModal, onSave }) => {
             Usages:
             <input type="text" name="Usages" />
           </label>
-          <label>
+          {/* <label>
             Temperature Level:
             <input type="text" name="TemperatureLevel" />
+          </label> */}
+          <label>
+            Temperature Level (Min-Max):
+            <select name="TemperatureLevel">
+              <option value="0">45 - 85</option>
+              <option value="1">70 - 100</option>
+              <option value="2">40 - 70</option>
+              <option value="3">0 - 60</option>
+            </select>
           </label>
           <div className="image-upload">
             <div className="image-placeholder">Add Image</div>

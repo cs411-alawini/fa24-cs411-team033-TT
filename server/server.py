@@ -754,14 +754,58 @@ def get_tags():
 #         return jsonify({'error': str(e)})
     
 
+# @app.route('/api/recommendationInputs', methods=['GET'])
+# def get_colors():
+#     try:
+#         with db.cursor() as cursor:
+#             UserId = request.args.get('UserId', None)
+#             print(f"GET /api/colors: UserId {UserId}")
+#             if UserId is not None:
+#                 # Execute SQL query
+#                 sql = """
+#                     SELECT DISTINCT Color AS Color, 'None' AS Usages, 'None' AS Category
+#                     FROM Clothes
+#                     WHERE UserId = %s
+
+#                     UNION
+
+#                     SELECT DISTINCT 'None' AS Color, Usages AS Usages, 'None' AS Category
+#                     FROM Clothes
+#                     WHERE UserId = %s
+
+#                     UNION
+
+#                     SELECT DISTINCT 'None' AS Color, 'None' AS Usages, Category AS Category
+#                     FROM Clothes
+#                     WHERE UserId = %s
+
+#                     """
+#                 cursor.execute(sql, (UserId, UserId, UserId))
+#                 # Get query results
+#                 results = cursor.fetchall()
+#                 # Convert results to JSON format string and encode with UTF-8
+#                 response_data = jsonify(results).get_data().decode('utf8')
+#                 # Create a new response object and pass the encoded string as data
+#                 response = make_response(response_data)
+#                 response.headers['Content-Type'] = 'application/json'
+#                 return response
+#             else:
+#                 return jsonify({'error': 'Invalid data'})
+#     except Exception as e:
+#         print('Error:', e)
+#         return jsonify({'error': str(e)})
+    
 @app.route('/api/recommendationInputs', methods=['GET'])
 def get_colors():
     try:
-        with db.cursor() as cursor:
+        # Get a connection from the pool
+        conn = pool.connection()
+        with conn.cursor() as cursor:
             UserId = request.args.get('UserId', None)
-            print(f"GET /api/colors: UserId {UserId}")
+            print(f"GET /api/recommendationInputs: UserId {UserId}")
+
             if UserId is not None:
-                # Execute SQL query
+                # Execute SQL query with parameterized input
                 sql = """
                     SELECT DISTINCT Color AS Color, 'None' AS Usages, 'None' AS Category
                     FROM Clothes
@@ -778,114 +822,25 @@ def get_colors():
                     SELECT DISTINCT 'None' AS Color, 'None' AS Usages, Category AS Category
                     FROM Clothes
                     WHERE UserId = %s
-
-                    """
+                """
                 cursor.execute(sql, (UserId, UserId, UserId))
-                # Get query results
                 results = cursor.fetchall()
-                # Convert results to JSON format string and encode with UTF-8
-                response_data = jsonify(results).get_data().decode('utf8')
-                # Create a new response object and pass the encoded string as data
-                response = make_response(response_data)
+
+                # Convert results to JSON and return response
+                response = jsonify(results)
                 response.headers['Content-Type'] = 'application/json'
                 return response
             else:
                 return jsonify({'error': 'Invalid data'})
+
     except Exception as e:
         print('Error:', e)
         return jsonify({'error': str(e)})
-    
 
-# @app.route('/api/category', methods=['GET'])
-# def get_category():
-#     try:
-#         with db.cursor() as cursor:
-#             UserId = request.args.get('UserId', None)
-#             print(f"GET /api/category: UserId {UserId}")
-#             if UserId is not None:
-#                 # Execute SQL query
-#                 sql = """
-#                     SELECT DISTINCT Category
-#                     FROM Clothes
-#                     WHERE UserId = %s
-#                     """
-#                 cursor.execute(sql, (UserId))
-#                 # Get query results
-#                 results = cursor.fetchall()
-#                 # Convert results to JSON format string and encode with UTF-8
-#                 response_data = jsonify(results).get_data().decode('utf8')
-#                 # Create a new response object and pass the encoded string as data
-#                 response = make_response(response_data)
-#                 response.headers['Content-Type'] = 'application/json'
-#                 return response
-#             else:
-#                 return jsonify({'error': 'Invalid data'})
-#     except Exception as e:
-#         print('Error:', e)
-#         return jsonify({'error': str(e)})
-
-
-# @app.route('/api/recommendationResult', methods=['GET'])
-# def get_ootd():
-#     try:
-#         UserId = request.args.get('UserId', None)
-#         Category = request.args.get('Category', None)
-#         Color = request.args.get('Color', None)
-#         Usages = request.args.get('Usages', None)
-#         CurrentTemperature = request.args.get('CurrentTemperature', None)
-        
-#         if UserId is not None:
-#             print(f"GET /api/recommendationResult: UserId {UserId}")
-            
-#             with db.cursor() as cursor:
-#                 sql = """
-#                     SELECT DISTINCT *
-#                     FROM Clothes c
-#                     NATURAL JOIN Temperature t
-#                     LEFT JOIN WearingHistory wh
-#                         ON (
-#                             c.ClothId = wh.Cloth1 OR 
-#                             c.ClothId = wh.Cloth2 OR 
-#                             c.ClothId = wh.Cloth3 OR 
-#                             c.ClothId = wh.Cloth4 OR 
-#                             c.ClothId = wh.Cloth5
-#                         )
-#                     WHERE c.UserId = %s
-#                     AND c.Category = %s
-#                     AND c.Color = %s
-#                     AND c.Usages = %s
-#                     AND %s != t.TemperatureMin 
-#                     AND %s != t.TemperatureMax
-#                     # AND (
-#                     #     NOT EXISTS (
-#                     #         SELECT 1 
-#                     #         FROM WearingHistory sub_wh
-#                     #         WHERE (
-#                     #             sub_wh.Cloth1 = c.ClothId OR 
-#                     #             sub_wh.Cloth2 = c.ClothId OR 
-#                     #             sub_wh.Cloth3 = c.ClothId OR 
-#                     #             sub_wh.Cloth4 = c.ClothId OR 
-#                     #             sub_wh.Cloth5 = c.ClothId
-#                     #         )
-#                     #         AND sub_wh.Date >= DATE_SUB(CURRENT_DATE, INTERVAL 14 DAY)
-#                     #     )
-#                     # );
-
-#                 """
-     
-#                 cursor.execute(sql, (UserId, Category, Color, Usages, CurrentTemperature, CurrentTemperature))
-#                 results = cursor.fetchall()
-#                 response_data = jsonify(results).get_data().decode('utf8')
-#                 response = make_response(response_data)
-#                 response.headers['Content-Type'] = 'application/json'
-#                 return response
-#         else:
-#             return jsonify({'error': 'Invalid UserId'})
-#     except Exception as e:
-#         print('Error:', e)
-#         return jsonify({'error': str(e)})
-    
-
+    finally:
+        # Ensure the connection is returned to the pool
+        if 'conn' in locals():
+            conn.close()
 
 @app.route('/api/recommendationResult', methods=['GET'])
 def get_ootd():
@@ -965,75 +920,144 @@ def get_ootd():
         error_message = traceback.format_exc()
         print('Error Traceback:', error_message)
         return jsonify({'error': str(e), 'trace': error_message})
+    
 
 
-
-# @app.route('/api/recommendationResult', methods=['GET'])
-# def get_ootd():
+# @app.route('/api/colorfrequency', methods=['GET'])
+# def get_color_frequency():
 #     try:
-#         UserId = request.args.get('UserId', None)
-#         Category = request.args.get('Category', None)
-#         Color = request.args.getlist('Color')  
-#         Usages = request.args.getlist('Usages') 
-#         CurrentTemperature = request.args.get('CurrentTemperature', None)
-        
-#         if UserId is not None:
-#             print(f"GET /api/recommendationResult: UserId {UserId}")
-            
-#             with db.cursor() as cursor:
-#                 base_sql = """
-#                     SELECT *
-#                     FROM Clothes c
-#                     NATURAL JOIN Temperature t
-#                     LEFT JOIN WearingHistory wh
-#                         ON (
-#                             c.ClothId = wh.Cloth1 OR 
-#                             c.ClothId = wh.Cloth2 OR 
-#                             c.ClothId = wh.Cloth3 OR 
-#                             c.ClothId = wh.Cloth4 OR 
-#                             c.ClothId = wh.Cloth5
-#                         )
-#                     WHERE c.UserId = %s
-#                     AND c.Category = %s
-#                     AND %s >= t.TemperatureMin 
-#                     AND %s <= t.TemperatureMax
-#                     AND (
-#                         NOT EXISTS (
-#                             SELECT 1 
-#                             FROM WearingHistory sub_wh
-#                             WHERE (
-#                                 sub_wh.Cloth1 = c.ClothId OR 
-#                                 sub_wh.Cloth2 = c.ClothId OR 
-#                                 sub_wh.Cloth3 = c.ClothId OR 
-#                                 sub_wh.Cloth4 = c.ClothId OR 
-#                                 sub_wh.Cloth5 = c.ClothId
-#                             )
-#                             AND sub_wh.Date >= DATE_SUB(CURRENT_DATE, INTERVAL 14 DAY)
-#                         )
-#                     )
-#                 """
-#                 params = [UserId, Category, CurrentTemperature, CurrentTemperature]
+#         # Get parameters from the request
+#         UserId = request.args.get('UserId', None, type=int)
+#         IntervalDays = request.args.get('IntervalDays', None, type=int)
 
-#                 if Color:
-#                     base_sql += " AND c.Color IN ({})".format(', '.join(['%s'] * len(Color)))
-#                     params.extend(Color)
-                
-#                 if Usages:
-#                     base_sql += " AND c.Usages IN ({})".format(', '.join(['%s'] * len(Usages)))
-#                     params.extend(Usages)
-                
-#                 cursor.execute(base_sql, tuple(params))
-#                 results = cursor.fetchall()
-#                 response_data = jsonify(results).get_data().decode('utf8')
-#                 response = make_response(response_data)
-#                 response.headers['Content-Type'] = 'application/json'
-#                 return response
-#         else:
-#             return jsonify({'error': 'Invalid UserId'})
+#         # Validate parameters
+#         if UserId is None or IntervalDays is None:
+#             return jsonify({'error': 'Missing required parameters: UserId, or IntervalDays'}), 400
+
+#         with db.cursor() as cursor:
+#             # Check and create the stored procedure if it does not exist
+#             create_procedure_sql = """
+#             CREATE PROCEDURE GetColorFrequency(
+#                 IN input_UserId INT,
+#                 IN input_IntervalDays INT
+#             )
+#             BEGIN
+#                 IF input_IntervalDays <= 0 THEN
+#                     SELECT 'Error: The interval days must be greater than 0' AS ErrorMessage;
+#                 ELSE
+#                     SELECT c.Color, 
+#                         COUNT(*) AS ColorFrequency
+#                     FROM WearingHistory wh
+#                     JOIN Clothes c 
+#                         ON wh.Cloth1 = c.ClothId OR wh.Cloth2 = c.ClothId 
+#                         OR wh.Cloth3 = c.ClothId OR wh.Cloth4 = c.ClothId 
+#                         OR wh.Cloth5 = c.ClothId
+#                     WHERE wh.UserId = input_UserId
+#                     AND wh.Date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL input_IntervalDays DAY) 
+#                                     AND CURRENT_DATE
+#                     AND c.Color IS NOT NULL
+#                     GROUP BY c.Color
+#                     ORDER BY ColorFrequency DESC;
+#                 END IF;
+#             END;
+
+#             """
+#             try:
+#                 cursor.execute("DROP PROCEDURE IF EXISTS GetColorFrequency;")
+#                 cursor.execute(create_procedure_sql)
+#             except Exception as e:
+#                 print("Error creating procedure:", str(e))
+
+#             # Call the stored procedure
+#             print("Calling procedure with:", UserId, IntervalDays)
+#             call_procedure_sql = "CALL GetColorFrequency(%s, %s)"
+#             cursor.execute(call_procedure_sql, (UserId, IntervalDays))
+#             results = cursor.fetchall()
+
+#             # Process results
+#             if not results:
+#                 return jsonify({'error': 'No data found for the given criteria'}), 404
+
+#             response_data = jsonify(results).get_data().decode('utf8')
+#             response = make_response(response_data)
+#             response.headers['Content-Type'] = 'application/json'
+#             return response
 #     except Exception as e:
-#         print('Error:', e)
-#         return jsonify({'error': str(e)})
+#         import traceback
+#         error_message = traceback.format_exc()
+#         print('Error Traceback:', error_message)
+#         return jsonify({'error': str(e), 'trace': error_message}), 500
 
+@app.route('/api/colorfrequency', methods=['GET'])
+def get_color_frequency():
+    try:
+        # Get a connection from the pool
+        conn = pool.connection()
+        with conn.cursor() as cursor:
+            # Get parameters from the request
+            UserId = request.args.get('UserId', None, type=int)
+            IntervalDays = request.args.get('IntervalDays', None, type=int)
+
+            # Validate parameters
+            if UserId is None or IntervalDays is None:
+                return jsonify({'error': 'Missing required parameters: UserId or IntervalDays'}), 400
+
+            # Check and create the stored procedure if it doesn't exist
+            create_procedure_sql = """
+            CREATE PROCEDURE GetColorFrequency(
+                IN input_UserId INT,
+                IN input_IntervalDays INT
+            )
+            BEGIN
+                IF input_IntervalDays <= 0 THEN
+                    SELECT 'Error: The interval days must be greater than 0' AS ErrorMessage;
+                ELSE
+                    SELECT c.Color, 
+                        COUNT(*) AS ColorFrequency
+                    FROM WearingHistory wh
+                    JOIN Clothes c 
+                        ON wh.Cloth1 = c.ClothId OR wh.Cloth2 = c.ClothId 
+                        OR wh.Cloth3 = c.ClothId OR wh.Cloth4 = c.ClothId 
+                        OR wh.Cloth5 = c.ClothId
+                    WHERE wh.UserId = input_UserId
+                    AND wh.Date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL input_IntervalDays DAY) 
+                                    AND CURRENT_DATE
+                    AND c.Color IS NOT NULL
+                    GROUP BY c.Color
+                    ORDER BY ColorFrequency DESC;
+                END IF;
+            END;
+            """
+            try:
+                cursor.execute("DROP PROCEDURE IF EXISTS GetColorFrequency;")
+                cursor.execute(create_procedure_sql)
+            except Exception as e:
+                print("Error creating procedure:", str(e))
+
+            # Call the stored procedure
+            print("Calling procedure with:", UserId, IntervalDays)
+            call_procedure_sql = "CALL GetColorFrequency(%s, %s)"
+            cursor.execute(call_procedure_sql, (UserId, IntervalDays))
+            results = cursor.fetchall()
+
+            # Process results
+            if not results:
+                return jsonify({'error': 'No data found for the given criteria'}), 404
+
+            response = jsonify(results)
+            response.headers['Content-Type'] = 'application/json'
+            return response
+
+    except Exception as e:
+        import traceback
+        error_message = traceback.format_exc()
+        print('Error Traceback:', error_message)
+        return jsonify({'error': str(e), 'trace': error_message}), 500
+
+    finally:
+        # Ensure the connection is returned to the pool
+        if 'conn' in locals():
+            conn.close()
 
 
 
@@ -1042,19 +1066,6 @@ if __name__ == '__main__':
 
 
 
-
-# DELIMITER $$
-
-# CREATE TRIGGER after_user_insert
-# AFTER INSERT ON Users
-# FOR EACH ROW
-# BEGIN
-#     DECLARE defaultClothId INT DEFAULT NULL;
-#     INSERT INTO Clothes
-#     VALUES ("1", New.UserId, ClothName, Category, Subcategory, Color, Usages, image_url, TemperatureLevel);
-# END$$
-
-# DELIMITER ;
 
 
 

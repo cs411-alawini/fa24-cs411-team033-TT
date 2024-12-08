@@ -30,6 +30,7 @@ import NavBar from './components/NavBar';
 import Login from './Login';
 import Register from './Register';
 import TodayOutfit from './TodayOutfit';
+import Post from './Post';
 
 const App = () => {
   const location = useLocation(); // Get the current location
@@ -46,6 +47,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/outfit" element={<TodayOutfit />} />
+        <Route path="/post" element={<Post />} />
       </Routes>
     </>
   );

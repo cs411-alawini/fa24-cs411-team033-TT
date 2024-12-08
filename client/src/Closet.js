@@ -165,7 +165,7 @@ const Closet = () => {
 
   const [groups, setGroups] = useState([]);
   const [clothes, setClothes] = useState([]);
-  // const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -187,6 +187,16 @@ const Closet = () => {
         
         setClothes(clothesResponse.data);
         setGroups(favGroupsResponse.data);
+
+        const tagPromises = clothesResponse.data.map(item =>
+          axios.get(`http://localhost:5050/api/tags?ClothId=${item.ClothId}`)
+        );
+        const tagResponses = await Promise.all(tagPromises);
+        console.log("tagResponses", tagResponses);
+        const allTags = tagResponses.flatMap(res => res.data);
+        setTags(allTags);
+
+
       } catch (error) {
         console.error("Error fetching clothes or favorite groups:", error);
       }
@@ -197,7 +207,19 @@ const Closet = () => {
 
 
 
-  const filteredClothes = filter === 'All' ? clothes : clothes.filter(item => item.Category === filter);
+  // const filteredClothes = filter === 'All' ? clothes : clothes.filter(item => item.Category === filter);
+
+  const filteredClothes = clothes.filter((item) => {
+    if (filter === 'All') return true;
+  
+    // Filter by Category
+    if (item.Category === filter) return true;
+  
+    // Filter by Favorite Group
+    const itemTags = tags.filter(tag => tag.ClothId === item.ClothId);
+    return itemTags.some(tag => tag.GroupName === filter);
+  });
+  
   // const clothesWithTags = clothes.map((item) => {
   //   const clothTags = tags
   //     .filter((tag) => tag.ClothId === item.ClothId)

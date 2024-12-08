@@ -453,6 +453,9 @@ const Calendar = () => {
     <div className="closet-container">
 
       <div className="calendar-header">
+        <button className="post-outfit-button" onClick={() => alert('Posting Today\'s Outfit...')}>
+          Post My Today Outfit
+        </button>
         <button className="nav-button" onClick={handlePrevMonth}>◀</button>
         <h2>{currentMonthName} {currentYear}</h2>
         <button className="nav-button" onClick={handleNextMonth}>▶</button>
