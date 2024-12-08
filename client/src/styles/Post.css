@@ -90,9 +90,8 @@
   }
   
   .posts-grid {
-    /* display: grid; */
-    display: flex;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
     margin-top: 20px;
   }
@@ -158,5 +157,11 @@
   
   .vote-button.voted:hover {
     background-color: #563E3E;
+  }
+  
+  .post-description {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #2A2222;
   }
   

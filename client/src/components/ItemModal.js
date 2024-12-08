@@ -17,7 +17,7 @@ const ItemModal = ({ item, closeModal }) => {
     Color: item.Color || '',
     Usages: item.Usages || '',
     Image: item.Image || '',
-    TemperatureLevel: item.TemperatureLevel || '',
+    TemperatureLevel: item.TemperatureLevel,
   });
   const [groups, setGroups] = useState([]); 
   const [itemGroups, setItemGroups] = useState([]);
@@ -166,6 +166,7 @@ const ItemModal = ({ item, closeModal }) => {
         });
   
         console.log('Post Response:', response.data);
+      
         setItemGroups((prev) => [...prev, groupId]);
       }
     } catch (error) {
@@ -293,10 +294,10 @@ const ItemModal = ({ item, closeModal }) => {
                       value={formData.TemperatureLevel}
                       onChange={handleChange}
                     >
-                      <option value="0">45 - 85</option>
-                      <option value="1">70 - 100</option>
-                      <option value="2">40 - 70</option>
-                      <option value="3">0 - 60</option>
+                      <option value="0">45 - 85 F (Spring)</option>
+                      <option value="1">70 - 100 F (Summer)</option>
+                      <option value="2">40 - 70 F (Fall)</option>
+                      <option value="3">0 - 60 F (Winter)</option>
                     </select>
                   </label>
                   {/* <label>Temperature Level:</label>

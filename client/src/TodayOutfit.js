@@ -170,7 +170,9 @@ const TodayOutfit = () => {
               "#ffe8b9",
               "#d0ffc2",
               "#edcefe",
-              "#ced5fe"], // Example colors
+              "#ced5fe",
+              "#ffd9f9",
+              "#c7ffe6"], // Example colors
             hoverOffset: 4
           }
         ]

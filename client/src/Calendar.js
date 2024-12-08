@@ -39,7 +39,7 @@ const Calendar = () => {
   // }, []);
 
   const [currentYear, setCurrentYear] = useState(2024);
-  const [currentMonth, setCurrentMonth] = useState(10);
+  const [currentMonth, setCurrentMonth] = useState(11);
   const [wearingHistory, setWearingHistory] = useState([]);
   const [popupData, setPopupData] = useState(null); // State for popup data
   const [isPopupOpen, setIsPopupOpen] = useState(false); // State for popup visibility
@@ -573,9 +573,9 @@ const Calendar = () => {
                 </div>
               ))}
 
-              <button type="submit">Submit</button>
+              <button type="submit" className="edit-button">Submit</button>
             </form>
-            <button onClick={closeAddPopup} className="close-popup">Close</button>
+            <button onClick={closeAddPopup} className="edit-button">Close</button>
           </div>
         </div>
       )}
@@ -621,7 +621,7 @@ const Calendar = () => {
             {!isEditing && (
               <button onClick={openEditPopup} className="edit-button">Edit</button>
             )}
-            <button onClick={closePopup} className="close-popup">Close</button>
+            <button onClick={closePopup} className="edit-button">Close</button>
           </div>
         </div>
       )}
@@ -635,11 +635,11 @@ const Calendar = () => {
             <button
               onClick={handleDeleteHistory}
               disabled={!deleteDate}
-              className="confirm-delete-button"
+              className="edit-button"
             >
               Confirm Delete
             </button>
-            <button onClick={closeDeletePopup} className="close-popup">Cancel</button>
+            <button onClick={closeDeletePopup} className="edit-button">Cancel</button>
           </div>
         </div>
       )}

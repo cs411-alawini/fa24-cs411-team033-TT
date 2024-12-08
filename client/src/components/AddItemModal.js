@@ -113,10 +113,10 @@ const AddItemModal = ({ isOpen, closeModal, onSave }) => {
           <label>
             Temperature Level (Min-Max):
             <select name="TemperatureLevel">
-              <option value="0">45 - 85</option>
-              <option value="1">70 - 100</option>
-              <option value="2">40 - 70</option>
-              <option value="3">0 - 60</option>
+              <option value="0">45 - 85 F (Spring)</option>
+              <option value="1">70 - 100 F (Summer)</option>
+              <option value="2">40 - 70 F (Fall)</option>
+              <option value="3">0 - 60 F (Winter)</option>
             </select>
           </label>
           <div className="image-upload">

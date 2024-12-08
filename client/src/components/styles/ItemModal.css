@@ -306,7 +306,7 @@
   }
   
   .create-tag-button {
-    background-color: #007bff;
+    background-color: #e6ffc7;
     color: white;
     padding: 5px 10px;
     border: none;
@@ -315,7 +315,7 @@
   }
   
   .delete-button {
-    background-color: #ff4d4d;
+    background-color: #ffd9f9;
     color: white;
     padding: 10px;
     border: none;
@@ -328,4 +328,23 @@
   
   .delete-button:hover {
     background-color: #d93b3b;
+  }
+  .tag-button.in-group {
+    background-color: #2e89eb;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+
+  .edit-button{
+    margin-top: 10px; 
+    margin-left: 5px;
+    padding: 8px 16px;
+    background-color: #f1eeee;
+    color: #2a2222;
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid #705c5c;
+    border-radius: 5px;
+    cursor: pointer;
   }

@@ -148,7 +148,8 @@ def update_clothes():
 @app.route('/api/clothes', methods=['GET'])
 def get_all_clothes():
     try:
-        with db.cursor() as cursor:
+        conn = pool.connection()
+        with conn.cursor() as cursor:
             UserId = request.args.get('UserId', None)
             print(f"GET /api/clothes: UserId {UserId}")
             if UserId is not None:
@@ -172,6 +173,10 @@ def get_all_clothes():
     except Exception as e:
         print('Error:', e)
         return jsonify({'error': str(e)})
+    finally:
+        # Ensure the connection is returned to the pool
+        if 'conn' in locals():
+            conn.close()
 
 
 
@@ -485,7 +490,8 @@ def delete_fav_group():
 @app.route('/api/include', methods=['GET'])
 def get_include():
     try:
-        with db.cursor() as cursor:
+        conn = pool.connection()
+        with conn.cursor() as cursor:
             FavId = request.args.get('FavoriteId', None)
             print(f"GET /api/include: FavoriteId {FavId}")
             if FavId is not None:
@@ -509,6 +515,9 @@ def get_include():
     except Exception as e:
         print('Error:', e)
         return jsonify({'error': str(e)})
+    finally:
+        if 'conn' in locals():
+            conn.close()
 
 @app.route('/api/include', methods=['POST'])
 @cross_origin()
@@ -660,8 +669,9 @@ def get_ootd():
 
         if UserId is None:
             return jsonify({'error': 'Invalid UserId'})
+        conn = pool.connection()
 
-        with db.cursor() as cursor:
+        with conn.cursor() as cursor:
             # 檢查並創建存儲過程
             create_procedure_sql = """
                 CREATE PROCEDURE GetRecommendedClothes(
@@ -726,6 +736,10 @@ def get_ootd():
         error_message = traceback.format_exc()
         print('Error Traceback:', error_message)
         return jsonify({'error': str(e), 'trace': error_message})
+    finally:
+        # Ensure the connection is returned to the pool
+        if 'conn' in locals():
+            conn.close()
 
 @app.route('/api/colorfrequency', methods=['GET'])
 def get_color_frequency():
@@ -914,8 +928,9 @@ def vote():
                 # check votes you have
                 cursor.execute('SELECT VoteNum FROM Votes WHERE Date= %s AND UserId=%s', (Today, UserId))
                 votes = cursor.fetchone()
+                votes = votes['VoteNum']
                 if votes == 0:
-                    return jsonify({"message": "Out of votes"}), 400
+                    return jsonify({"message": "Out of votes"})
                 # remove one vote from User
                 # sql_remove = """UPDATE Votes
                 #                 SET VoteNum = 
@@ -966,7 +981,8 @@ def vote():
                 
                 return jsonify({'message': 'voted'})
     except Exception as e:
-        db.rollback()
+        if db and db.open:
+            db.rollback()
         print('Error:', e)
         return jsonify({'error': str(e)})
 
@@ -1053,9 +1069,10 @@ def unvote():
                 cursor.execute(sql_delete_vote_history, (Today, UserId, PostId))
                 db.commit()
                 
-                return jsonify({'message': 'voted'})
+                return jsonify({'message': 'unvoted'})
     except Exception as e:
-        db.rollback()
+        if db and db.open:
+            db.rollback()
         print('Error:', e)
         return jsonify({'error': str(e)})
 

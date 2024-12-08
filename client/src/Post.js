@@ -117,7 +117,7 @@ import axios from "axios";
 const Post = () => {
   const [posts, setPosts] = useState([]); // To store posts data
   const [votedPosts, setVotedPosts] = useState({}); // Tracks voted status for each post
-  const [voteLeft, setVoteLeft] = useState(0); // Tracks votes left for the user
+  const [voteLeft, setVoteLeft] = useState(); // Tracks votes left for the user
   const navigate = useNavigate();
 
   // Fetch posts data on component mount
@@ -335,6 +335,8 @@ const handleVoteToggle = async (postId) => {
                 >
                 {votedPosts.includes(post.PostId) ? "Unvote" : "Vote"}
                 </button>
+                <div className="post-description">{post.Description}</div>
+
             </div>
             <div className="post-clothes">
               {[post.Cloth1Image, post.Cloth2Image, post.Cloth3Image, post.Cloth4Image, post.Cloth5Image]
@@ -343,8 +345,9 @@ const handleVoteToggle = async (postId) => {
                   <img key={idx} src={img} alt={`Cloth ${idx + 1}`} className="post-cloth-img" />
                   
                 ))}
-                {post.Description}
+                
             </div>
+            
             
           </div>
         ))}

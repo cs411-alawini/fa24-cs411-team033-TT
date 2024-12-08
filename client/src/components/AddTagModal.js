@@ -46,8 +46,8 @@ const AddTagModal = ({ isOpen, closeModal }) => {
           value={groupName}
           onChange={(e) => setGroupName(e.target.value)}
         />
-        <button onClick={handleSubmit}>Submit</button>
-        <button onClick={closeModal}>Cancel</button>
+        <button onClick={handleSubmit} className="edit-button">Submit</button>
+        <button onClick={closeModal} className="edit-button">Cancel</button>
       </div>
     </div>
   );

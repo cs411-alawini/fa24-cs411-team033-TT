@@ -67,10 +67,10 @@ const DeleteTagModal = ({ isOpen, closeModal }) => {
             </option>
           ))}
         </select>
-        <button onClick={handleSubmit} disabled={!selectedTag}>
+        <button onClick={handleSubmit} disabled={!selectedTag} className="edit-button">
           Delete
         </button>
-        <button onClick={closeModal}>Cancel</button>
+        <button onClick={closeModal} className="edit-button">Cancel</button>
       </div>
     </div>
   );

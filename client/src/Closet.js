@@ -15,7 +15,7 @@ const Closet = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [filter, setFilter] = useState('All');
-  const gridSize = 35;
+  const gridSize = 1;
   
   const [groups, setGroups] = useState([]);
   const [clothes, setClothes] = useState([]);
@@ -141,7 +141,7 @@ const Closet = () => {
       {/* Search Section */}
       <div className="search-bar">
         <input type="text" onChange={handleSearchInput} value={searchFilter} placeholder="Search by name" />
-        <button className="search-button">🔍</button>
+        {/* <button className="search-button">🔍</button> */}
         
         <button className="add-button" onClick={handleAddClick}>
           Add
