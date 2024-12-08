@@ -4,39 +4,6 @@ import './styles/Calendar.css';
 import axios from 'axios';
 
 const Calendar = () => {
-  // const [currentYear, setCurrentYear] = useState(2024);
-  // const [currentMonth, setCurrentMonth] = useState(10);
-  // const [wearingHistory, setWearingHistory] = useState([]);
-  // const [popupData, setPopupData] = useState(null); // State for popup data
-  // const [isPopupOpen, setIsPopupOpen] = useState(false); // State for popup visibility
-  // const [isAddPopupOpen, setIsAddPopupOpen] = useState(false); // State for add form visibility
-  // const navigate = useNavigate();
-
-
-  // useEffect(() => {
-  //   const fetchWearingHistory = async () => {
-  //     try {
-  //       const userId = localStorage.getItem('UserId'); // Retrieve UserId
-  //         if (!userId) {
-  //             console.error("UserId is not available in localStorage.");
-  //             return;
-  //         }
-  //       const response = await axios.get(`http://localhost:5050/api/wearingHistory?UserId=${userId}`);
-  //       // const response = await axios.get('http://localhost:5050/api/wearingHistory', {
-  //       //   params: { UserId: 1 },
-  //       // });
-  //       const data = response.data.map((item) => ({
-  //         ...item,
-  //         Date: new Date(item.Date),
-  //       }));
-  //       setWearingHistory(data);
-  //     } catch (error) {
-  //       console.error('Error fetching wearing history:', error);
-  //     }
-  //   };
-
-  //   fetchWearingHistory();
-  // }, []);
 
   const [currentYear, setCurrentYear] = useState(2024);
   const [currentMonth, setCurrentMonth] = useState(11);
@@ -51,44 +18,6 @@ const Calendar = () => {
   const [description, setDescription] = useState(""); // State for the text box
 
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   const fetchWearingHistory = async () => {
-  //     try {
-  //       const userId = localStorage.getItem('UserId'); // Retrieve UserId
-  //       if (!userId) {
-  //         console.error("UserId is not available in localStorage.");
-  //         return;
-  //       }
-  //       const response = await axios.get(`http://localhost:5050/api/wearingHistory?UserId=${userId}`);
-  //       const data = response.data.map((item) => ({
-  //         ...item,
-  //         Date: new Date(item.Date),
-  //       }));
-  //       setWearingHistory(data);
-  //     } catch (error) {
-  //       console.error('Error fetching wearing history:', error);
-  //     }
-  //   };
-
-  //   const fetchClothes = async () => {
-  //     try {
-  //       const userId = localStorage.getItem('UserId'); // Retrieve UserId
-  //       if (!userId) {
-  //         console.error("UserId is not available in localStorage.");
-  //         return;
-  //       }
-  //       const response = await axios.get(`http://localhost:5050/api/clothes?UserId=${userId}`);
-  //       setClothesList(response.data); // Store the retrieved clothes data
-  //       console.log(response.data);
-  //     } catch (error) {
-  //       console.error('Error fetching clothes data:', error);
-  //     }
-  //   };
-
-  //   fetchWearingHistory();
-  //   // fetchClothes();
-  // }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -134,48 +63,6 @@ const Calendar = () => {
   for (let i = 0; i < firstDayOfMonth; i++) {
     calendarDays.push(null);
   }
-  // for (let i = 1; i <= daysInMonth; i++) {
-  //   const date = new Date(currentYear, currentMonth, i);
-  //   // const date = new Date(Date.UTC(currentYear, currentMonth, i));
-  //   const history = wearingHistory.find(
-  //     (entry) => entry.Date.toDateString() === date.toDateString()
-  //   );
-  //   calendarDays.push({
-  //     date,
-  //     history,
-  //   });
-  // }
-
-  // for (let i = 1; i <= daysInMonth; i++) {
-  //   const date = new Date(Date.UTC(currentYear, currentMonth, i)); // Use UTC here
-  //   const history = wearingHistory.find(
-  //     (entry) => {
-  //       // Compare dates normalized to UTC
-  //       const entryDate = new Date(Date.UTC(entry.Date.getFullYear(), entry.Date.getMonth(), entry.Date.getDate()));
-  //       return entryDate.toISOString().split('T')[0] === date.toISOString().split('T')[0];
-  //     }
-  //   );
-  //   calendarDays.push({
-  //     date,
-  //     history,
-  //   });
-  // }
-
-  // for (let i = 1; i <= daysInMonth; i++) {
-  //   // Create calendar date in UTC
-  //   const date = new Date(Date.UTC(currentYear, currentMonth, i));
-    
-  //   // Find matching history using UTC date comparison
-  //   const history = wearingHistory.find(
-  //     (entry) =>
-  //       entry.Date.toISOString().split('T')[0] === date.toISOString().split('T')[0]
-  //   );
-  
-  //   calendarDays.push({
-  //     date,
-  //     history,
-  //   });
-  // }
 
   for (let i = 1; i <= daysInMonth; i++) {
     // Create the date for the current day in the calendar

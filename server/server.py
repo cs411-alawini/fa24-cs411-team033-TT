@@ -917,32 +917,24 @@ def post_today_wearing_history():
     
 @app.route('/api/vote', methods=['POST', 'OPTIONS'])
 def vote():
-    try:
-        Today = request.form.get('Date', None)
-        UserId = request.form.get('UserId', None)
-        PostId = request.form.get('PostId', None)
+    Today = request.form.get('Date', None)
+    UserId = request.form.get('UserId', None)
+    PostId = request.form.get('PostId', None)
 
-        print(f"POST /api/vote: User {UserId} vote for Post {PostId})")
-        if Today and UserId and PostId:
-            with db.cursor() as cursor:
+    print(f"POST /api/vote: User {UserId} vote for Post {PostId})")
+    if Today and UserId and PostId:
+        try:
+            conn = pool.connection()
+            with conn.cursor() as cursor:
+                cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE")
+                cursor.execute("START TRANSACTION")
                 # check votes you have
                 cursor.execute('SELECT VoteNum FROM Votes WHERE Date= %s AND UserId=%s', (Today, UserId))
                 votes = cursor.fetchone()
                 votes = votes['VoteNum']
                 if votes == 0:
                     return jsonify({"message": "Out of votes"})
-                # remove one vote from User
-                # sql_remove = """UPDATE Votes
-                #                 SET VoteNum = 
-                #                     (SELECT VoteNum FROM Votes WHERE Date= %s AND UserId=%s) - 1
-                #                 WHERE Date=%s AND UserId=%s"""
-                # cursor.execute(sql_remove, (Today, UserId, Today, UserId))
-                # # add one vote to User
-                # sql_add = """UPDATE Users
-                #             SET Votes = 
-                #                 (SELECT Votes FROM WearingHistory NATURAL JOIN User WHERE PostId=%s)+1
-                #             WHERE UserId=(SELECT UserId FROM WearingHistory WHERE PostId=%s)"""
-
+                
                 sql_remove = """UPDATE Votes
                                 SET VoteNum =  VoteNum - 1
                                 WHERE Date=%s AND UserId=%s"""
@@ -977,14 +969,17 @@ def vote():
                 sql = """INSERT INTO VoteHistory
                         VALUES (%s, %s, %s)"""
                 cursor.execute(sql, (Today, UserId, PostId))
-                db.commit()
+                conn.commit()
                 
                 return jsonify({'message': 'voted'})
-    except Exception as e:
-        if db and db.open:
-            db.rollback()
-        print('Error:', e)
-        return jsonify({'error': str(e)})
+        except Exception as e:
+            if conn:
+                conn.rollback()
+            print('Error:', e)
+            return jsonify({'error': str(e)})
+        finally:
+            if 'conn' in locals():
+                conn.close()
 
 @app.route('/api/voted', methods=['GET'])
 def voted():
@@ -1008,14 +1003,18 @@ def voted():
 
 @app.route('/api/unvote', methods=['POST', 'OPTIONS'])
 def unvote():
-    try:
-        Today = request.form.get('Date', None)
-        UserId = request.form.get('UserId', None)
-        PostId = request.form.get('PostId', None)
+    Today = request.form.get('Date', None)
+    UserId = request.form.get('UserId', None)
+    PostId = request.form.get('PostId', None)
 
-        print(f"POST /api/vote: User {UserId} vote for Post {PostId})")
-        if Today and UserId and PostId:
-            with db.cursor() as cursor:
+    print(f"POST /api/vote: User {UserId} vote for Post {PostId})")
+    if Today and UserId and PostId: 
+        try:
+            conn = pool.connection()
+            with conn.cursor() as cursor:
+                # cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE")
+                cursor.execute("SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE")
+                cursor.execute("START TRANSACTION")
                 # add one vote to User
                 sql_remove = """UPDATE Votes
                                 SET VoteNum = (
@@ -1028,17 +1027,6 @@ def unvote():
                                 )
                                 WHERE Date=%s AND UserId=%s"""
                 cursor.execute(sql_remove, (Today, UserId, Today, UserId))
-                # # remove one vote to User
-                # sql_add = """UPDATE Users
-                #             SET Votes = 
-                #                 (SELECT Votes FROM WearingHistory NATURAL JOIN User WHERE PostId=%s)-1
-                #             WHERE UserId=(SELECT UserId FROM WearingHistory WHERE PostId=%s)"""
-                # cursor.execute(sql_add, (PostId, PostId))
-                # # remove vote history
-                # sql = """DELETE FROM VoteHistory
-                #         WHERE Date=%s AND UserId=%s AND PostId=%s"""
-                # cursor.execute(sql, (Today, UserId, PostId))
-                # Remove one vote from the 'Users' table
                 sql_remove_vote = """
                     UPDATE Users AS u
                     SET Votes = (
@@ -1064,17 +1052,21 @@ def unvote():
                 # Remove vote history
                 sql_delete_vote_history = """
                     DELETE FROM VoteHistory
-                    WHERE Date = %s AND UserId = %s AND PostId = %s;
+                    WHERE Date = %s AND UserId = %s AND PostId = %s; 
                 """
                 cursor.execute(sql_delete_vote_history, (Today, UserId, PostId))
-                db.commit()
+                conn.commit()
                 
                 return jsonify({'message': 'unvoted'})
-    except Exception as e:
-        if db and db.open:
-            db.rollback()
-        print('Error:', e)
-        return jsonify({'error': str(e)})
+        except Exception as e:
+            if conn:
+                conn.rollback()
+            print('Error:', e)
+            return jsonify({'error': str(e)})
+        finally:
+            # Ensure the connection is returned to the pool
+            if 'conn' in locals():
+                conn.close()
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5050,debug=True)
