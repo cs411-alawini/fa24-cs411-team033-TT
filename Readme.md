@@ -24,6 +24,11 @@ https://github.com/user-attachments/assets/4f51022f-1bc3-4cf2-b56e-7d23416ac6b1
 ### Post today outfit, Vote/Unvote outfits
 https://github.com/user-attachments/assets/a48bcff2-5dae-4bba-a74e-3ff19384fc76
 
+## Logout
+https://github.com/user-attachments/assets/54bf39d1-abf4-4dc0-b524-905393962500
+
+
+
 
 
 
