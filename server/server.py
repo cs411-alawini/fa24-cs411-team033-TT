@@ -690,7 +690,7 @@ def get_ootd():
                                 WHEN c.Usages = p_Usages THEN 1 ELSE 0
                             END +
                             CASE
-                                WHEN p_CurrentTemperature > t.TemperatureMin AND p_CurrentTemperature < t.TemperatureMax THEN 1 ELSE 0
+                                WHEN p_CurrentTemperature*1.8+32 > t.TemperatureMin AND p_CurrentTemperature*1.8+32 < t.TemperatureMax THEN 1 ELSE 0
                             END +
                             CASE
                                 WHEN NOT EXISTS (
